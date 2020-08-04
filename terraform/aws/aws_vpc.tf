@@ -14,7 +14,7 @@ resource "aws_vpc" "terraform_demo" {
   tags = {
     Name = "Terraform Demo"
   }
-} # end resource
+}
 
 # create the Subnet
 resource "aws_subnet" "terraform_demo_Subnet" {
@@ -25,7 +25,7 @@ resource "aws_subnet" "terraform_demo_Subnet" {
   tags = {
     Name = "Terraform Demo Subnet"
   }
-} # end resource
+}
 
 # Create the Security Group
 resource "aws_security_group" "terraform_demo_Security_Group" {
@@ -52,7 +52,7 @@ resource "aws_security_group" "terraform_demo_Security_Group" {
     Name = "Terraform Demo Security Group"
     Description = "Terraform Demo Security Group"
   }
-} # end resource
+}
 
 # create VPC Network access control list
 resource "aws_network_acl" "terraform_demo_Security_ACL" {
@@ -119,7 +119,7 @@ resource "aws_network_acl" "terraform_demo_Security_ACL" {
   tags = {
     Name = "Terraform Demo ACL"
   }
-} # end resource
+}
 
 # Create the Internet Gateway
 resource "aws_internet_gateway" "terraform_demo_GW" {
@@ -127,7 +127,7 @@ resource "aws_internet_gateway" "terraform_demo_GW" {
   tags = {
     Name = "Terraform Demo Internet Gateway"
   }
-} # end resource
+}
 
 # Create the Route Table
 resource "aws_route_table" "terraform_demo_route_table" {
@@ -135,20 +135,20 @@ resource "aws_route_table" "terraform_demo_route_table" {
   tags = {
     Name = "Terraform Demo Route Table"
   }
-} # end resource
+}
 
 # Create the Internet Access
 resource "aws_route" "terraform_demo_internet_access" {
   route_table_id         = aws_route_table.terraform_demo_route_table.id
   destination_cidr_block = var.destinationCIDRblock
   gateway_id             = aws_internet_gateway.terraform_demo_GW.id
-} # end resource
+}
 
 # Associate the Route Table with the Subnet
 resource "aws_route_table_association" "terraform_demo_association" {
   subnet_id      = aws_subnet.terraform_demo_Subnet.id
   route_table_id = aws_route_table.terraform_demo_route_table.id
-} # end resource
+}
 
 ## This section creates a VM in the right subnet and security group, commenting out for now
 #data "aws_ami" "ubuntu_ami" {
