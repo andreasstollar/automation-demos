@@ -2,7 +2,7 @@
 - hosts: all
   gather_facts: no
   tasks:
-  - name: set hostname
+  - name: set ntp server
     eos_config:
       #lines: ntp server {{ ntp_host }}
       lines: ntp server 169.254.169.123
