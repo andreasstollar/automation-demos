@@ -1,0 +1,9 @@
+---
+- hosts: all
+  gather_facts: no
+  tasks:
+  - name: Enable NETCONF
+    connection: network_cli
+    junos_netconf:
+    when: ansible_network_os == 'junos'
+...

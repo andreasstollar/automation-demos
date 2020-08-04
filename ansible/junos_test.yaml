@@ -1,0 +1,9 @@
+---
+- hosts: all
+  gather_facts: no
+  tasks:
+  - name: Retrieve Junos OS version
+    junos_command:
+      commands: show version
+    when: ansible_network_os == 'junos'
+...

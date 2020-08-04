@@ -1,0 +1,12 @@
+---
+- hosts: all
+  gather_facts: no
+  tasks:
+  - name: set hostname
+    junos_command:
+      commands: 
+        - config 
+        - set system host-name juniper-router01
+        #- set system host-name {{ inventory_hostname_short }}
+        - commit
+...

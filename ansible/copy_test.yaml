@@ -1,0 +1,16 @@
+---
+- hosts: all
+  vars:
+    nano_deb: nano_2.5.3-2ubuntu2_amd64.deb
+    nano_rpm: nano-2.9.8-1.el8.x86_64.rpm
+  serial: 20
+  tasks:
+    - name: scp deb package
+      copy:
+        src: "roles/common/files/{{ nano_deb }}"
+        dest: /tmp/
+        owner: root
+        group: root
+      become: true
+      become_user: root
+      when: ansible_os_family == "Debian"

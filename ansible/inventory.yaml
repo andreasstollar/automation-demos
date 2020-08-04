@@ -1,0 +1,39 @@
+---
+all:
+  children:
+    fabric:
+      hosts:
+        fabric-01:
+          ntp-host: 10.0.0.23
+        fabric-02:
+          ntp-host: 10.5.0.23
+    spine:
+      children:
+        spine_eos:
+          hosts:
+            spine-eos-01:
+              ansible_become: true
+              ansible_host: 54.177.165.246
+              ntp-host: 10.0.0.23
+              tenant-has_l3: true
+        spine_ios:
+          hosts:
+            spine-ios-01:
+              ntp-host: 10.5.0.23
+              tenant-has_l3: true
+        spine_junos:
+          hosts:
+            spine-junos-01:
+              ntp-host: 10.0.0.23
+              tenant-has_l3: true
+    ungrouped: {}
+    xperi_losgatos:
+      hosts:
+        fabric-02: {}
+        spine-ios-01: {}
+    xperi_sanjose:
+      hosts:
+        fabric-01: {}
+        spine-eos-01: {}
+        spine-junos-01: {}
+...

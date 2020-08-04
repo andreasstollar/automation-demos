@@ -1,0 +1,66 @@
+---
+- hosts: all
+  vars:
+    cid: E5F67E695EEB4BF1B8BDFD4BBC4A38F7-C7
+    deb_pkg: falcon-sensor_5.31.0-9606_amd64.deb
+    rpm_pkg: falcon-sensor-5.31.0-9606.el8.x86_64.rpm
+  serial: 20
+  tasks:
+    - name: scp deb package
+      copy:
+        src: ../pkg/{{ deb_pkg }}
+        dest: /tmp/
+        owner: root
+        group: root
+      become: true
+      become_user: root
+      when: ansible_os_family == "Debian"
+    - name: Install a .deb package
+      apt:
+        deb: /tmp/{{ deb_pkg }}
+      become: true
+      become_user: root
+      when: ansible_os_family == "Debian"
+    - name: scp rpm package
+      copy:
+        src: ../pkg/{{ rpm_pkg }}
+        dest: /tmp/
+        owner: root
+        group: root
+      become: true
+      become_user: root
+      when: ansible_os_family == "RedHat"
+    - name: install rpm package
+      yum:
+        name: /tmp/{{ rpm_pkg }}
+        state: latest
+      become: true
+      become_user: root
+      when: ansible_os_family == "RedHat"
+    - name: license linux
+      command: /opt/CrowdStrike/falconctl -s --cid={{ cid }}
+      become: true
+      become_user: root
+      when: ansible_os_family == "Debian" or ansible_os_family == "RedHat"
+      args:
+        creates: /opt/CrowdStrike/Registry.bin
+    - name: enable falcon-sensor.service systemd way on {{ inventory_hostname }}
+      systemd:
+        state: started
+        name: falcon-sensor
+        enabled: yes
+        masked: no
+        daemon_reload: yes
+      become: true
+      become_user: root
+      when: ansible_os_family == "Debian" or ansible_os_family == "RedHat"
+    - name: scp package
+      win_copy:
+        src: ../pkg/WindowsSensor.exe
+        dest: C:\Windows\temp\
+        owner: root
+        group: root
+      when: ansible_os_family == "Windows"
+    - name: Install Falcon Sensor
+      win_command: C:\Windows\temp\WindowsSensor.exe /install /quiet /norestart CID={{ cid }}
+      when: ansible_os_family == "Windows"

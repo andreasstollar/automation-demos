@@ -1,0 +1,9 @@
+---
+- hosts: all
+  gather_facts: no
+  tasks:
+  - name: set hostname
+    eos_config:
+      #lines: hostname arista-router01
+      lines: hostname {{ inventory_hostname_short }}
+...

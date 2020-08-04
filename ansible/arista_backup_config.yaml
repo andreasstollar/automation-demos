@@ -1,0 +1,11 @@
+---
+- hosts: all
+  gather_facts: no
+  tasks:
+  - name: Backup current switch config (eos)
+    eos_config:
+      backup: yes
+    register: backup_eos_location
+    when: ansible_network_os == 'eos'
+  - debug: var=backup_eos_location
+

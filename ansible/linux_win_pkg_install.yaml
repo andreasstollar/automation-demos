@@ -1,0 +1,46 @@
+---
+- hosts: all
+  vars:
+    nano_deb: nano_2.5.3-2ubuntu2_amd64.deb
+    nano_rpm: nano-2.9.8-1.el8.x86_64.rpm
+  serial: 20
+  tasks:
+    - name: scp deb package
+      copy:
+        src: ../pkg/{{ nano_deb }}
+        dest: /tmp/
+        owner: root
+        group: root
+      become: true
+      become_user: root
+      when: ansible_os_family == "Debian"
+    - name: Install a .deb package
+      apt:
+        deb: /tmp/{{ nano_deb }}
+      become: true
+      become_user: root
+      when: ansible_os_family == "Debian"
+    - name: scp rpm package
+      copy:
+        src: ../pkg/{{ nano_rpm }}
+        dest: /tmp/
+        owner: root
+        group: root
+      become: true
+      become_user: root
+      when: ansible_os_family == "RedHat"
+    - name: install rpm package
+      yum:
+        name: /tmp/{{ nano_rpm }}
+        state: latest
+      become: true
+      become_user: root
+      when: ansible_os_family == "RedHat"
+    - name: scp package
+      win_copy:
+        src: ../pkg/WindowsSensor.exe
+        dest: C:\Windows\temp\
+        owner: root
+        group: root
+    - name: Install Falcon Sensor
+      win_command: C:\Windows\temp\WindowsSensor.exe /install /quiet /norestart CID=<CUSTOMER_CID>

@@ -1,0 +1,4 @@
+ansible_connection: network_cli
+ansible_network_os: junos
+ansible_user: ec2-user
+ansible_check_commit: yes
