@@ -1,0 +1,9 @@
+---
+- hosts: all
+  gather_facts: no
+  tasks:
+  - name: set hostname
+    ios_config:
+      #lines: hostname cisco-router01
+      lines: hostname {{ inventory_hostname_short }}
+...
