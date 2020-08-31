@@ -2,10 +2,10 @@
 - hosts: all
   gather_facts: no
   tasks:
-  - name: Backup current switch config (eos)
+  - name: Backup current switch config
     ios_config:
       backup: yes
     register: backup_ios_location
-    when: ansible_network_os == 'ios'
+    #when: ansible_network_os == 'ios'
   - debug: var=backup_ios_location
 ...
