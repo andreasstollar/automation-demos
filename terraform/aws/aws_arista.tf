@@ -5,6 +5,7 @@ provider "aws" {
 
 resource "aws_instance" "arista_eos" {
   ami           = "ami-0b7ecbe5e7b6b9874" # EOS-4.24.0FX
+  count         = "3"
   instance_type = "c5.xlarge"
   key_name	= "andreas_gdt_key"
   subnet_id     = "subnet-0c9bf6664adafe6b8"

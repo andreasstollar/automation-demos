@@ -5,5 +5,7 @@
   - name: Enable NETCONF
     connection: network_cli
     junos_netconf:
+      listens_on: 830
+      state: present
     when: ansible_network_os == 'junos'
 ...
