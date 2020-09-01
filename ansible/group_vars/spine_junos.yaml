@@ -1,5 +1,7 @@
 ---
+# enable netconf, then use netconf -- needs work
 ansible_connection: network_cli
+#ansible_connection: netconf
 ansible_network_os: junos
 ansible_user: ec2-user
 ansible_check_commit: yes

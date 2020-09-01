@@ -2,10 +2,10 @@
 - hosts: all
   gather_facts: no
   tasks:
-  - name: set hostname
+  - name: set ntp host
     junos_command:
       commands: 
         - config 
-        - set system host-name {{ inventory_hostname_short }}
+        - set system ntp server {{ ntp_host }}
         - commit
 ...
