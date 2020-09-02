@@ -10,6 +10,12 @@ variable "SecurityGroup" {
 variable "Environment" {
     default = "Terraform Demo"
 }
+variable "VMName" {
+    default = "TestTerraformVM"
+}
+variable "NIC" {
+    default = "myNIC"
+}
 variable "Vnet" {
     default = "Terraform_Demo_Vnet"
 }

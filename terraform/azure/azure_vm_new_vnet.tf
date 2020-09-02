@@ -12,13 +12,13 @@ resource "azurerm_public_ip" "myterraformpublicip" {
 
 # Create network interface
 resource "azurerm_network_interface" "myterraformnic" {
-    name                = "myNIC"
+    name                = var.NIC
     location            = var.region
     resource_group_name = azurerm_resource_group.myterraformgroup.name
 
     ip_configuration {
         name                          = "myNicConfiguration"
-        subnet_id                     = var.Subnet
+        subnet_id                     = azurerm_subnet.myterraformsubnet.id
         private_ip_address_allocation = "Dynamic"
         public_ip_address_id          = azurerm_public_ip.myterraformpublicip.id
     }
@@ -68,14 +68,15 @@ resource "azurerm_storage_account" "mystorageaccount" {
 
 # Create virtual machine
 resource "azurerm_linux_virtual_machine" "myterraformvm" {
-    name                  = "TestTerraformVM"
+    name                  = var.VMName
     location              = var.region
     resource_group_name   = azurerm_resource_group.myterraformgroup.name
     network_interface_ids = [azurerm_network_interface.myterraformnic.id]
     size                  = "Standard_DS1_v2"
 
     os_disk {
-        name              = "myOsDisk"
+        # a random name will chosen if none specified
+        #name              = "myOsDisk"
         caching           = "ReadWrite"
         storage_account_type = "Premium_LRS"
     }
@@ -87,7 +88,7 @@ resource "azurerm_linux_virtual_machine" "myterraformvm" {
         version   = "latest"
     }
 
-    computer_name  = "terraformvm"
+    #computer_name  = "terraformvm"
     admin_username = "azureuser"
     #priority = "Spot" # sets spot instance, cheaper, not applicable to free-tier flavors
     #eviction_policy = "Deallocate" # Deallocate or Delete, must be set when using 'Spot' 
@@ -110,10 +111,10 @@ resource "azurerm_linux_virtual_machine" "myterraformvm" {
 }
 
 data "azurerm_public_ip" "myterraformpublicip" {
-  name                = var.PublicIPName
-  resource_group_name = var.ResourceGroup
+    name                = azurerm_public_ip.myterraformpublicip.name
+    resource_group_name = azurerm_linux_virtual_machine.myterraformvm.resource_group_name
 }
 
 output "public_ip_address" {
-  value = data.azurerm_public_ip.myterraformpublicip.ip_address
+    value = data.azurerm_public_ip.myterraformpublicip.ip_address
 }
