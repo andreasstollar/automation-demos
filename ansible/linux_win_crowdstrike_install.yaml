@@ -1,9 +1,11 @@
 ---
 - hosts: all
   vars:
-    cid: E5F67E695EEB4BF1B8BDFD4BBC4A38F7-C7
-    deb_pkg: falcon-sensor_5.31.0-9606_amd64.deb
-    rpm_pkg: falcon-sensor-5.31.0-9606.el8.x86_64.rpm
+    cid: <PUT_CID_HERE>
+    deb_pkg: <NAME_OF_DEB_PACKAGE_HERE_PUT_FILE_IN_TMP>
+    rpm_pkg: <NAME_OF_RPM_PACKAGE_HERE_PUT_FILE_IN_TMP>
+    # Windows packages is always called WindowsSensor.exe
+    win_pkg: WindowsSensor.exe
   serial: 20
   tasks:
     - name: scp deb package
@@ -56,7 +58,7 @@
       when: ansible_os_family == "Debian" or ansible_os_family == "RedHat"
     - name: scp package
       win_copy:
-        src: ../pkg/WindowsSensor.exe
+        src: ../pkg/{{ rpm_pkg }}
         dest: C:\Windows\temp\
         owner: root
         group: root
