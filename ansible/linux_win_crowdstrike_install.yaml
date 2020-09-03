@@ -2,15 +2,15 @@
 - hosts: all
   vars:
     cid: <PUT_CID_HERE>
-    deb_pkg: <NAME_OF_DEB_PACKAGE_HERE_PUT_FILE_IN_TMP>
-    rpm_pkg: <NAME_OF_RPM_PACKAGE_HERE_PUT_FILE_IN_TMP>
+    deb_pkg: <NAME_OF_DEB_PACKAGE_HERE_PUT_FILE_IN_files_dir>
+    rpm_pkg: <NAME_OF_RPM_PACKAGE_HERE_PUT_FILE_IN_file_dir>
     # Windows packages is always called WindowsSensor.exe
     win_pkg: WindowsSensor.exe
   serial: 20
   tasks:
     - name: scp deb package
       copy:
-        src: ../pkg/{{ deb_pkg }}
+        src: ./{{ deb_pkg }}
         dest: /tmp/
         owner: root
         group: root
@@ -25,7 +25,7 @@
       when: ansible_os_family == "Debian"
     - name: scp rpm package
       copy:
-        src: ../pkg/{{ rpm_pkg }}
+        src: ./{{ rpm_pkg }}
         dest: /tmp/
         owner: root
         group: root
@@ -58,7 +58,7 @@
       when: ansible_os_family == "Debian" or ansible_os_family == "RedHat"
     - name: scp package
       win_copy:
-        src: ../pkg/{{ rpm_pkg }}
+        src: ./{{ win_pkg }}
         dest: C:\Windows\temp\
         owner: root
         group: root
