@@ -61,3 +61,8 @@ Python 3.8.2 (default, Apr 27 2020, 15:53:34)
 >>> print(result.std_out)
 b'\r\nWindows IP Configuration\r\n\r\n\r\nEthernet adapter Ethernet:\r\n\r\n   Connection-specific DNS Suffix  . : us-west-1.compute.internal\r\n   Link-local IPv6 Address . . . . . : fe80::a56b:7f6a:feb1:1484%4\r\n   IPv4 Address. . . . . . . . . . . : 172.31.12.118\r\n   Subnet Mask . . . . . . . . . . . : 255.255.240.0\r\n   Default Gateway . . . . . . . . . : 172.31.0.1\r\n\r\nTunnel adapter Local Area Connection* 3:\r\n\r\n   Connection-specific DNS Suffix  . : \r\n   IPv6 Address. . . . . . . . . . . : 2001:0:34f1:8072:20c3:2f9f:f2c6:b80\r\n   Link-local IPv6 Address . . . . . : fe80::20c3:2f9f:f2c6:b80%6\r\n   Default Gateway . . . . . . . . . : ::\r\n\r\nTunnel adapter isatap.us-west-1.compute.internal:\r\n\r\n   Media State . . . . . . . . . . . : Media disconnected\r\n   Connection-specific DNS Suffix  . : us-west-1.compute.internal\r\n'
 ```
+
+## Tips, Traps and Tricks
+
+Mac OSX Users! Ansible may crash on you with an ugly error: `objc[38892]: +[__NSCFConstantString initialize] may have been in progress in another thread when fork() was called. We cannot safely call it or ignore it in the fork() child process. Crashing instead. Set a breakpoint on objc_initializeAfterForkError to debug.` 
+To Resolve, disable Mac OS thread saftey with this `export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES`
