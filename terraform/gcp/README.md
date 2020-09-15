@@ -4,7 +4,7 @@ Here are a few examples to get started launching terraform instances in GCP.
 ## Files
 `variables.tf` - variables referenced in other .tf files
 
-`main.tf` - creates VPC, Subnets and Firewalls
+`vpc.tf` - creates VPC, Subnets and Firewalls
 
 `linux_instance.tf` - creates linux vm
 (need some network instance scripts)
