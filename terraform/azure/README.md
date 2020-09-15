@@ -3,6 +3,15 @@ Here are a few examples to get started launching terraform instances in Azure.
 ## IMPORTANT!! 
 Azure cli tools do NOT work when attached to GDT VPN. You can use Azure cloud shell.
 
+## Files
+`variables.tf` - variables referenced in other .tf files
+
+`vpc.tf` - creates VPC, Subnets and Firewalls
+
+`linux_instance.tf` - creates linux vm, use with vpc.tf to create instance in new VPC
+
+`linux_instance_existing_vpc.tf` - creates a linux vm in existing VPC, update subnet_id and security_group_id
+
 ### Authentication
 Login via a web browser, use azure console CLI tools, or install locally (see below). Locally installed tools launches web browser to authenticate `az login` launches browser.
 
