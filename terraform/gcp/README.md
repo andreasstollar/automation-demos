@@ -1,5 +1,5 @@
 # GCP Terraform Collection
-Here are a few examples to get started launching terraform instances. 
+Here are a few examples to get started launching terraform instances in GCP.
 
 ## Files
 `variables.tf` - variables referenced in other .tf files

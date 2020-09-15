@@ -1,3 +1,7 @@
+# AWS Terraform Collection
+Here are a few examples to get started launching terraform instances in AWS.
+
+## Authentication
 1. Set up AWS credentals. If you not done so, get your Access Keys. Go to AWS Console Services -> Security, Identity, & Compliance -> IAM. Select your user, and go to the 'Security credentials' tab. Select 'Create access key' make sure you save your key, it can NOT be displayed again. If you already created a key, but don't have it, you must create a new one.
 1. Put the access keys in `~/.aws/credentials` formatted like this:<br>
 `[default]`<br>
