@@ -35,16 +35,18 @@ Not recreating those docs here, see https://cloud.google.com/sdk/docs/downloads-
 
 Mac users can use brew `brew install google-cloud-sdk`
 
-### Find image to use:
-andreasstollar@Andreass-MacBook-Pro:~/Documents/Repos/Training%20Sandbox/terraform/gcp$ gcloud compute images list |grep ubuntu
+### Find image to use
+This looks for ubuntu images, adjust as needed:
+`gcloud compute images list |grep ubuntu`
+
 ```
-NAME                                                  PROJECT              FAMILY                            DEPRECATED  STATUS
-ubuntu-1604-xenial-v20200908                          ubuntu-os-cloud      ubuntu-1604-lts                               READY
-ubuntu-1804-bionic-v20200908                          ubuntu-os-cloud      ubuntu-1804-lts                               READY
-ubuntu-2004-focal-v20200907                           ubuntu-os-cloud      ubuntu-2004-lts                               READY
-ubuntu-minimal-1604-xenial-v20200908                  ubuntu-os-cloud      ubuntu-minimal-1604-lts                       READY
-ubuntu-minimal-1804-bionic-v20200908                  ubuntu-os-cloud      ubuntu-minimal-1804-lts                       READY
-ubuntu-minimal-2004-focal-v20200907                   ubuntu-os-cloud      ubuntu-minimal-2004-lts                       READY
+NAME                                    PROJECT         FAMILY                  DEPRECATED      STATUS
+ubuntu-1604-xenial-v20200908            ubuntu-os-cloud ubuntu-1604-lts                         READY
+ubuntu-1804-bionic-v20200908            ubuntu-os-cloud ubuntu-1804-lts                         READY
+ubuntu-2004-focal-v20200907             ubuntu-os-cloud ubuntu-2004-lts                         READY
+ubuntu-minimal-1604-xenial-v20200908    ubuntu-os-cloud ubuntu-minimal-1604-lts                 READY
+ubuntu-minimal-1804-bionic-v20200908    ubuntu-os-cloud ubuntu-minimal-1804-lts                 READY
+ubuntu-minimal-2004-focal-v20200907     ubuntu-os-cloud ubuntu-minimal-2004-lts                 READY
 ```
 
 Use PROJECT and FAMILY in terraform script
