@@ -1,20 +1,20 @@
 variable "project_name" {
-        default = "axiomatic-set-289615"
+  default = "axiomatic-set-289615"
 }
 variable "region" {
-     default = "us-west1"
+  default = "us-west1"
 }
 variable "zone" {
-     default = "us-west1-a"
+  default = "us-west1-a"
 }
-variable "company" { 
-        default = "terraform-demo"
+variable "company" {
+  default = "terraform-demo"
 }
 variable "vpcCIDRblock" {
-    default = "10.0.5.0/24"
+  default = "10.0.5.0/24"
 }
 variable "subnetCIDRblock" {
-    default = "10.0.5.0/24"
+  default = "10.0.5.0/24"
 }
 # not using these right now
 #variable "uc1_private_subnet" {
