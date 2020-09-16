@@ -2,14 +2,14 @@ provider "aws" {
   version = "~> 2.0"
   #access_key = var.access_key # my keys are stored in ~/.aws/credentials
   #secret_key = var.secret_key # my keys are stored in ~/.aws/credentials
-  region     = var.region
+  region = var.region
 }
 
 # create the VPC
 resource "aws_vpc" "terraform_demo" {
   cidr_block           = var.vpcCIDRblock
-  instance_tenancy     = var.instanceTenancy 
-  enable_dns_support   = var.dnsSupport 
+  instance_tenancy     = var.instanceTenancy
+  enable_dns_support   = var.dnsSupport
   enable_dns_hostnames = var.dnsHostNames
   tags = {
     Name = "Terraform Demo"
@@ -20,7 +20,7 @@ resource "aws_vpc" "terraform_demo" {
 resource "aws_subnet" "terraform_demo_Subnet" {
   vpc_id                  = aws_vpc.terraform_demo.id
   cidr_block              = var.subnetCIDRblock
-  map_public_ip_on_launch = var.mapPublicIP 
+  map_public_ip_on_launch = var.mapPublicIP
   availability_zone       = var.availabilityZone
   tags = {
     Name = "Terraform Demo Subnet"
@@ -29,18 +29,18 @@ resource "aws_subnet" "terraform_demo_Subnet" {
 
 # Create the Security Group
 resource "aws_security_group" "terraform_demo_Security_Group" {
-  vpc_id       = aws_vpc.terraform_demo.id
-  name         = "Terraform Demo Security Group"
-  description  = "Terraform Demo Security Group"
-  
+  vpc_id      = aws_vpc.terraform_demo.id
+  name        = "Terraform Demo Security Group"
+  description = "Terraform Demo Security Group"
+
   # allow ingress of port 22
   ingress {
-    cidr_blocks = var.ingressCIDRblock  
+    cidr_blocks = var.ingressCIDRblock
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-  } 
-  
+  }
+
   # allow egress of all ports
   egress {
     from_port   = 0
@@ -49,34 +49,34 @@ resource "aws_security_group" "terraform_demo_Security_Group" {
     cidr_blocks = ["0.0.0.0/0"]
   }
   tags = {
-    Name = "Terraform Demo Security Group"
+    Name        = "Terraform Demo Security Group"
     Description = "Terraform Demo Security Group"
   }
 }
 
 # create VPC Network access control list
 resource "aws_network_acl" "terraform_demo_Security_ACL" {
-  vpc_id = aws_vpc.terraform_demo.id
-  subnet_ids = [ aws_subnet.terraform_demo_Subnet.id ]# allow ingress port 22
+  vpc_id     = aws_vpc.terraform_demo.id
+  subnet_ids = [aws_subnet.terraform_demo_Subnet.id] # allow ingress port 22
   ingress {
     protocol   = "tcp"
     rule_no    = 100
     action     = "allow"
-    cidr_block = var.destinationCIDRblock 
+    cidr_block = var.destinationCIDRblock
     from_port  = 22
     to_port    = 22
   }
-  
+
   # allow ingress port 80 
   ingress {
     protocol   = "tcp"
     rule_no    = 200
     action     = "allow"
-    cidr_block = var.destinationCIDRblock 
+    cidr_block = var.destinationCIDRblock
     from_port  = 80
     to_port    = 80
   }
-  
+
   # allow ingress ephemeral ports 
   ingress {
     protocol   = "tcp"
@@ -86,27 +86,27 @@ resource "aws_network_acl" "terraform_demo_Security_ACL" {
     from_port  = 1024
     to_port    = 65535
   }
-  
+
   # allow egress port 22 
   egress {
     protocol   = "tcp"
     rule_no    = 100
     action     = "allow"
     cidr_block = var.destinationCIDRblock
-    from_port  = 22 
+    from_port  = 22
     to_port    = 22
   }
-  
+
   # allow egress port 80 
   egress {
     protocol   = "tcp"
     rule_no    = 200
     action     = "allow"
     cidr_block = var.destinationCIDRblock
-    from_port  = 80  
-    to_port    = 80 
+    from_port  = 80
+    to_port    = 80
   }
- 
+
   # allow egress ephemeral ports
   egress {
     protocol   = "tcp"
