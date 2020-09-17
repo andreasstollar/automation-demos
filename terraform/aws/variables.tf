@@ -10,6 +10,9 @@ variable "region" {
 variable "availabilityZone" {
   default = "us-west-1a"
 }
+variable "node_count" {
+  default = "2"
+}
 variable "instanceTenancy" {
   default = "default"
 }
