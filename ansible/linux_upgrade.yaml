@@ -1,0 +1,19 @@
+---
+- hosts: all
+  serial: 20
+  tasks:
+  - name: Upgrade all packages on {{ ansible_os_family }} hosts
+    apt:
+      upgrade: dist
+    become: true
+    become_user: root
+    when: ansible_os_family == "Debian"
+  - name: Upgrade all packages on {{ ansible_os_family }} hosts
+    yum:
+      name: '*'
+      state: latest
+      # exclude kernel if you like, lets upgrade everything
+      #exclude: kernel*,foo*
+    become: true
+    become_user: root
+    when: ansible_os_family == "RedHat"
