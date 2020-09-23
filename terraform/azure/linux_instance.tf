@@ -87,6 +87,13 @@ resource "azurerm_linux_virtual_machine" "myterraformvm" {
     sku       = "18.04-LTS"
     version   = "latest"
   }
+  # this will give you a CentOS image
+  #source_image_reference {
+  #  publisher = "openLogic"
+  #  offer     = "CentOS"
+  #  sku       = "8_2-gen2"
+  #  version   = "latest"
+  #}
 
   #computer_name  = "terraformvm"
   admin_username = "azureuser"
