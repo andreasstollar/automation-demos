@@ -34,7 +34,7 @@ data "google_compute_image" "centos_image" {
 
 resource "google_compute_instance" "centos-8" {
   count        = var.node_count
-  name         = "terraform-demo-ubuntu-${count.index + 1}"
+  name         = "terraform-demo-centos-${count.index + 1}"
   machine_type = "f1-micro"
   tags         = ["ssh", "http"]
   zone         = var.zone
