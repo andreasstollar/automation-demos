@@ -16,6 +16,9 @@ variable "vpcCIDRblock" {
 variable "subnetCIDRblock" {
   default = "10.0.5.0/24"
 }
+variable "node_count" {
+  default = "2"
+}
 # not using these right now
 #variable "uc1_private_subnet" {
 #        default = "10.26.1.0/24"
