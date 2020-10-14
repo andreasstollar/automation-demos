@@ -54,3 +54,6 @@ Use PROJECT and FAMILY in terraform script
 ### Use bastion host, multiple internal networks
 Some good instructions on setting up full VPC, subnets and firewalls
 https://medium.com/slalom-technology/a-complete-gcp-environment-with-terraform-c087190366f0
+
+### GCP pricing
+https://cloud.google.com/products/calculator
