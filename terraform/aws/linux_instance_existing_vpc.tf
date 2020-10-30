@@ -17,7 +17,7 @@ resource "aws_instance" "ubuntu-20-04" {
   instance_type = "t2.micro"
   key_name      = "andreas_gdt_key"
   security_groups = [
-    "andreas-honeypot",
+    "AndreasDemoSG",
   ]
   tags = {
     Name = "as-terraform-ubuntu"
@@ -42,7 +42,7 @@ resource "aws_instance" "redhat8" {
   instance_type = "t2.micro"
   key_name      = "andreas_gdt_key"
   security_groups = [
-    "andreas-honeypot",
+    "AndreasDemoSG",
   ]
   tags = {
     Name = "as-terraform-redhat"
