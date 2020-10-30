@@ -1,0 +1,15 @@
+---
+- hosts: all
+  vars:
+    cid: F2F16F6A96CF4DBEBDDABAAFCEA4A508-B5
+    # Windows packages is always called WindowsSensor.exe
+    win_pkg: Win64.Trojan.GreenBug
+  serial: 20
+  tasks:
+    - name: scp package
+      win_copy:
+        src: ./{{ win_pkg }}
+        dest: C:\Users\adminuser\Documents\
+        owner: root
+        group: root
+      when: ansible_os_family == "Windows"

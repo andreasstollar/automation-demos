@@ -1,0 +1,46 @@
+---
+- name: Install and upgrade deb package
+  apt:
+    name:
+      - mysql-server
+      - python3-pymysql # enables ansible mysql modules to work
+    state: present
+  become: true
+  become_user: root
+  when: ansible_os_family == "Debian"
+- name: Install and upgrade rpm package
+  yum:
+    name:
+      - mysql
+      - mysql-common
+      - mysql-libs
+      - mysql-server
+      - python3-PyMySQL # enables ansible mysql modules to work
+    state: present
+  become: true
+  become_user: root
+  when: ansible_os_family == "RedHat"
+- name: enable mysql.service systemd way on {{ inventory_hostname }}
+  systemd:
+    state: started
+    name: mysql
+    enabled: yes
+    masked: no
+    daemon_reload: yes
+  become: true
+  become_user: root
+- name: Set root user password
+  # If .my.cnf already exists, this will cause an mysql-root-password update.
+  mysql_user:
+    name: root
+    password: "{{ mysql_root_pass}}"
+    check_implicit_admin: true
+- name: Create .my.cnf
+  template:
+    src: "client.my.cnf.j2"
+    dest: "/root/.my.cnf"
+    owner: root
+    group: root
+    mode: 0600
+  become: true
+  become_user: root

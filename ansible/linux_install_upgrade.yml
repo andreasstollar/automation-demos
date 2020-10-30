@@ -1,0 +1,18 @@
+---
+- hosts: all
+  serial: 20
+  tasks:
+    - name: Install and upgrade deb package
+      apt:
+        name: nginx
+        state: latest
+      become: true
+      become_user: root
+      when: ansible_os_family == "Debian"
+    - name: install and upgrade rpm package
+      yum:
+        name: apport
+        state: latest
+      become: true
+      become_user: root
+      when: ansible_os_family == "RedHat"

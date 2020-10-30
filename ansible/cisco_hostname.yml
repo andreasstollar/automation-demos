@@ -2,8 +2,16 @@
 - hosts: all
   gather_facts: no
   tasks:
-  - name: set hostname
-    ios_config:
-      #lines: hostname ip-10-0-1-139
-      lines: hostname {{ inventory_hostname_short }}
+  - name: configure hostname and domain name
+    cisco.ios.ios_system:
+      hostname: "{{ inventory_hostname_short }}"
+      domain_name: cloud.choctawnation.com
+      domain_search:
+      - choctawnation.com
+  
+  - name: configure name servers
+    cisco.ios.ios_system:
+      name_servers:
+      - 169.254.169.254
+      - 8.8.4.4
 ...
