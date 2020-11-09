@@ -8,7 +8,6 @@
       domain_name: cloud.choctawnation.com
       domain_search:
       - choctawnation.com
-  
   - name: configure name servers
     cisco.ios.ios_system:
       name_servers:
