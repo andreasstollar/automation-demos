@@ -1,0 +1,3 @@
+---
+chrony_service_name: 'chrony'
+chrony_conf_file: '/etc/chrony/chrony.conf'
