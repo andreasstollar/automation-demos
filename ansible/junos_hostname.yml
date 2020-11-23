@@ -4,8 +4,8 @@
   tasks:
   - name: set hostname
     junos_command:
-      commands: 
-        - config 
+      commands:
+        - config
         - set system host-name {{ inventory_hostname_short }}
         - commit
 ...

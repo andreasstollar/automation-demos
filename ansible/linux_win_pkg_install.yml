@@ -11,6 +11,7 @@
         dest: /tmp/
         owner: root
         group: root
+        mode: '0644'
       become: true
       become_user: root
       when: ansible_os_family == "Debian"
@@ -26,13 +27,13 @@
         dest: /tmp/
         owner: root
         group: root
+        mode: '0644'
       become: true
       become_user: root
       when: ansible_os_family == "RedHat"
     - name: install rpm package
       yum:
         name: /tmp/{{ nano_rpm }}
-        state: latest
       become: true
       become_user: root
       when: ansible_os_family == "RedHat"

@@ -11,6 +11,7 @@
         dest: /tmp/
         owner: root
         group: root
+        mode: '0644'
       become: true
       become_user: root
       when: ansible_os_family == "Debian"

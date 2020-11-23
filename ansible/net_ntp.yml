@@ -12,8 +12,8 @@
     when: ansible_network_os == 'ios'
   - name: set junos ntp server
     junos_command:
-      commands: 
-        - config 
+      commands:
+        - config
         - set system ntp server {{ ntp_host }}
         - commit
     when: ansible_network_os == 'junos'

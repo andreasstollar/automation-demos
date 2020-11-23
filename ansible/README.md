@@ -64,5 +64,17 @@ b'\r\nWindows IP Configuration\r\n\r\n\r\nEthernet adapter Ethernet:\r\n\r\n   C
 
 ## Tips, Traps and Tricks
 
-Mac OSX Users! Ansible may crash on you with an ugly error: `objc[38892]: +[__NSCFConstantString initialize] may have been in progress in another thread when fork() was called. We cannot safely call it or ignore it in the fork() child process. Crashing instead. Set a breakpoint on objc_initializeAfterForkError to debug.` 
+Convert .ini to .yml
+```
+ansible-inventory -i inventory.ini -y --list >inventory.yml
+```
+
+use ansible-lint, install with brew or package manager
+```
+ansible-lint <playbook>
+```
+
+Mac OSX Users! Ansible may crash on you with an ugly error: 
+```
+objc[38892]: +[__NSCFConstantString initialize] may have been in progress in another thread when fork() was called. We cannot safely call it or ignore it in the fork() child process. Crashing instead. Set a breakpoint on objc_initializeAfterForkError to debug.```
 To Resolve, disable Mac OS thread saftey with this `export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES`

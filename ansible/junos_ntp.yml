@@ -4,8 +4,8 @@
   tasks:
   - name: set ntp host
     junos_command:
-      commands: 
-        - config 
+      commands:
+        - config
         - set system ntp server {{ ntp_host }}
         - commit
 ...

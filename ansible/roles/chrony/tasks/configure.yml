@@ -4,4 +4,7 @@
   template:
     src: 'chrony.conf.j2'
     dest: "{{ chrony_conf_file }}"
+    owner: root
+    group: root
+    mode: '0644'
   notify: 'restart chrony'
