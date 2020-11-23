@@ -1,0 +1,5 @@
+---
+# file: chrony.yml
+- hosts: all
+  roles:
+    - chrony

@@ -1,29 +1,26 @@
 all:
   children:
-    fabric:
+    datacenter1:
       hosts:
-        fabric-01: {}
-        fabric-02: {}
-    spine:
-      children:
-        spine_eos:
-          hosts:
-            spine-eos-01:
-              ansible_host: 18.144.155.177
-        spine_ios:
-          hosts:
-            spine-ios-01:
-              ansible_host: 54.183.237.157
-        spine_junos:
-          hosts:
-            spine-junos-01:
-              ansible_host: 13.52.237.77
-    xperi_losgatos:
+        cisco-ios-1:
+          ansible_host: 34.105.33.224
+        junos-1:
+          ansible_host: 35.197.36.6
+        spiderlounge.org:
+    datacenter2:
       hosts:
-        fabric-02: {}
-        spine-ios-01: {}
-    xperi_sanjose:
+        cisco-ios-2:
+          ansible_host: 35.197.36.60
+        junos-2:
+          ansible_host: 35.197.36.6
+    ios:
       hosts:
-        fabric-01: {}
-        spine-eos-01: {}
-        spine-junos-01: {}
+        cisco-ios-1: {}
+        cisco-ios-2: {}
+    junos:
+      hosts:
+        junos-1: {}
+    linux:
+      hosts:
+        spiderlounge.org: {}
+    ungrouped: {}
