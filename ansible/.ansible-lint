@@ -1,0 +1,6 @@
+# .ansible-lint                                                                                                                │
+warn_list:  # or 'skip_list' to silence them completely                                                                        │
+  - ''
+skip_list:
+  - '403' # Package installs should not use latest 
+  - '206' # seems to be a bug in this rule, space before and after variable

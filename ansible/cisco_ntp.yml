@@ -4,6 +4,7 @@
   tasks:
   - name: set ntp server
     cisco.ios.ios_ntp:
+      server: metadata.google.internal
       logging: false
       state: present
 ...
