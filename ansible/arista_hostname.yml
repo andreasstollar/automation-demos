@@ -4,6 +4,7 @@
   tasks:
   - name: set hostname
     eos_config:
+    # eos_config docs https://docs.ansible.com/ansible/latest/modules/eos_config_module.html
       #lines: hostname arista-router01
       lines: hostname {{ inventory_hostname_short }}
 ...

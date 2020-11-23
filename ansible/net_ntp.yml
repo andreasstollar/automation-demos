@@ -1,5 +1,6 @@
 ---
 - hosts: all
+  # this will gather info about host, but slows down plays, use as need
   gather_facts: no
   tasks:
   - name: set eos ntp server
@@ -7,8 +8,11 @@
       lines: ntp server {{ ntp_host }}
     when: ansible_network_os == 'eos'
   - name: set ios ntp server
-    ios_config:
-      lines: ntp server {{ ntp_host }}
+    cisco.ios.ios_ntp:
+      #server: metadata.google.internal
+      server: {{ ntp_host }}
+      logging: false
+      state: present
     when: ansible_network_os == 'ios'
   - name: set junos ntp server
     junos_command:
