@@ -1,5 +1,5 @@
 variable "project_name" {
-  default = "axiomatic-set-289615"
+  default = "gdt-demo-1"
 }
 variable "region" {
   default = "us-west1"
