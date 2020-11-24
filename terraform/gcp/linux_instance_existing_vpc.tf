@@ -12,20 +12,22 @@ data "google_compute_image" "ubuntu_image" {
 
 resource "google_compute_instance" "ubuntu_2004" {
   count        = var.node_count
-  name         = "terraform-demo-ubuntu-${count.index + 1}"
+  name         = "automation-demo"
   machine_type = var.machine_type
-  tags         = ["ssh", "http"]
+  tags         = ["ssh", "http", "https", "http-8080", "https-8443"]
   zone         = var.zone
   boot_disk {
     initialize_params {
       image = data.google_compute_image.ubuntu_image.self_link
     }
   }
-
   network_interface {
-    network    = "default"
+    network = "default"
     access_config {
     }
+  }
+  metadata = {
+    ssh-keys = var.SshKey
   }
 }
 

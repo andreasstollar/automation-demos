@@ -14,12 +14,14 @@ resource "google_compute_instance" "ubuntu_2004" {
       image = data.google_compute_image.ubuntu_image.self_link
     }
   }
-
   network_interface {
     network    = google_compute_network.terraform_vpc.self_link
     subnetwork = google_compute_subnetwork.terraform_subnet.self_link
     access_config {
     }
+  }
+  metadata {
+    ssh-keys = var.SshKey
   }
 }
 
@@ -43,12 +45,14 @@ resource "google_compute_instance" "centos-8" {
       image = data.google_compute_image.centos_image.self_link
     }
   }
-
   network_interface {
     network    = google_compute_network.terraform_vpc.self_link
     subnetwork = google_compute_subnetwork.terraform_subnet.self_link
     access_config {
     }
+  }
+  metadata {
+    ssh-keys = var.SshKey
   }
 }
 
