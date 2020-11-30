@@ -3,16 +3,37 @@ all:
     datacenter1:
       hosts:
         cisco-ios-1:
+          ansible_become: true
+          ansible_become_method: enable
+          ansible_connection: network_cli
           ansible_host: 34.105.33.224
+          ansible_network_os: ios
+          ansible_user: andreas
+          ntp_host: 10.0.0.1
         junos-1:
-          ansible_host: 35.197.36.6
-        spiderlounge.org:
+          ansible_check_commit: true
+          ansible_connection: network_cli
+          ansible_host: 34.105.33.225
+          ansible_network_os: junos
+          ansible_user: andreas
+          ntp_host: 10.0.0.1
     datacenter2:
       hosts:
         cisco-ios-2:
-          ansible_host: 35.197.36.60
+          ansible_become: true
+          ansible_become_method: enable
+          ansible_connection: network_cli
+          ansible_host: 35.196.36.60
+          ansible_network_os: ios
+          ansible_user: andreas
+          ntp_host: 169.254.169.254
         junos-2:
-          ansible_host: 35.197.36.6
+          ansible_check_commit: true
+          ansible_connection: network_cli
+          ansible_host: 35.197.36.66
+          ansible_network_os: junos
+          ansible_user: andreas
+          ntp_host: 169.254.169.254
     ios:
       hosts:
         cisco-ios-1: {}
@@ -20,7 +41,10 @@ all:
     junos:
       hosts:
         junos-1: {}
+        junos-2: {}
     linux:
       hosts:
         spiderlounge.org: {}
+        webhost1: {}
+        webhost2: {}
     ungrouped: {}
