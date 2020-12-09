@@ -2,9 +2,10 @@
 - name: 'Configure Chrony'
   become: yes
   template:
-    src: 'chrony.conf.j2'
+    src: "{{ansible_os_family | lower }}.chrony.conf.j2"
     dest: "{{ chrony_conf_file }}"
     owner: root
     group: root
     mode: '0644'
+    backup: yes
   notify: 'restart chrony'

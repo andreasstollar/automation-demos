@@ -64,6 +64,11 @@ b'\r\nWindows IP Configuration\r\n\r\n\r\nEthernet adapter Ethernet:\r\n\r\n   C
 
 ## Tips, Traps and Tricks
 
+Output all facts for a host, note that it doesn't seem to work against a host
+```
+ansible <HOSTGROUP> -m setup
+```
+
 Convert .ini to .yml
 ```
 ansible-inventory -i inventory.ini -y --list >inventory.yml
