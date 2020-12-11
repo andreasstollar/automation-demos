@@ -4,7 +4,7 @@
     cid: <PUT_CID_HERE>
     deb_pkg: <NAME_OF_DEB_PACKAGE_HERE_PUT_FILE_IN_files_dir>
     rpm_pkg: <NAME_OF_RPM_PACKAGE_HERE_PUT_FILE_IN_file_dir>
-    # Windows packages is always called WindowsSensor.exe
+    # Windows package is always called WindowsSensor.exe
     win_pkg: WindowsSensor.exe
   serial: 20
   tasks:
