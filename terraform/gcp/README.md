@@ -9,6 +9,16 @@ Here are a few examples to get started launching terraform instances in GCP.
 `linux_instance.tf` - creates linux vm
 (need some network instance scripts)
 
+## CLI tools
+Use gcloud console, or install tools locally. 
+
+Local installs will need to use the authentication mechanism below.
+
+On a mac.
+```
+brew install google-cloud-sdk
+```
+
 ## Authentication
 Set up credentials
 https://cloud.google.com/docs/authentication/getting-started
