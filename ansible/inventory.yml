@@ -9,6 +9,7 @@ all:
           ansible_host: 34.105.33.224
           ansible_network_os: ios
           ansible_user: andreas
+          chrony_server: ntp.ubuntu.com
           ntp_host: 10.0.0.1
         junos-1:
           ansible_check_commit: true
@@ -16,6 +17,10 @@ all:
           ansible_host: 34.105.33.225
           ansible_network_os: junos
           ansible_user: andreas
+          chrony_server: ntp.ubuntu.com
+          ntp_host: 10.0.0.1
+        spiderlounge.org:
+          chrony_server: ntp.ubuntu.com
           ntp_host: 10.0.0.1
     datacenter2:
       hosts:

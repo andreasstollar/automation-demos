@@ -1,1 +1,1 @@
-export GOOGLE_APPLICATION_CREDENTIALS="$HOME/.gcp/GDT_compute_svc_acct.json"
+export GOOGLE_APPLICATION_CREDENTIALS="$HOME/.gcp/GDT_andreas_svc_acct.json"
