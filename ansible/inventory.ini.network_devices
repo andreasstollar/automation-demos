@@ -1,0 +1,30 @@
+[all:children]
+fabric
+spine
+
+[fabric]
+fabric-01
+fabric-02
+
+[spine:children]
+spine_eos
+spine_junos
+spine_ios
+
+[spine_eos]
+spine-eos-01 ansible_host=18.144.155.177
+
+[spine_junos]
+spine-junos-01 ansible_host=13.52.237.77
+
+[spine_ios]
+spine-ios-01 ansible_host=54.183.237.157
+
+[xperi_sanjose]
+fabric-01
+spine-eos-01
+spine-junos-01
+
+[xperi_losgatos]
+fabric-02
+spine-ios-01
