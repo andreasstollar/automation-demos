@@ -1,0 +1,14 @@
+---
+- hosts: all
+  become: yes
+  tasks:
+    - name: Change user password
+      user:
+        name: ubuntu
+        update_password: always
+        password: "{{ newpassword|password_hash('sha512') }}"
+
+# to run do:
+# `ansible-playbook -i inventory_single.ini change_pass.yml --extra-vars newpassword=<a_new_password>`
+# or
+# `ansible-playbook --limit spiderlounge.org change_pass.yml --extra-vars newpassword=<a_new_password>`
