@@ -1,0 +1,4 @@
+---
+ansible_password: <set_here_or_use"-k"_flag>
+ansible_user: remoteadmin
+...

@@ -1,0 +1,28 @@
+---
+- hosts: all
+  gather_facts: no
+  #connection: local
+  vars:
+    provider:
+      password: "{{ ansible_password }}" # in group_vars/f5.yml or use -k flag to prompt for pass
+      server: "{{ inventory_hostname }}"
+      #server: "34.105.17.221"
+      user: "{{ ansible_user }}"
+      validate_certs: no
+      server_port: 8443
+  collections:
+   - f5networks.f5_module
+  tasks:
+  - name: Collect all BIG-IP information
+    bigip_device_info:
+      gather_subset:
+        - all
+      provider: "{{ provider }}"
+    register: bigip_backup
+    delegate_to: localhost
+  - name: copy the output to a local file
+    copy:
+      content: "{{ bigip_backup | to_nice_json }}"
+      dest: "{{ inventory_hostname }}-config.json"
+    delegate_to: localhost
+...

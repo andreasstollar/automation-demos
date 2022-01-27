@@ -1,0 +1,24 @@
+---
+- hosts: all
+  gather_facts: no
+  vars:
+    provider:
+      password: "{{ ansible_password }}" # in group_vars/f5.yml or use -k flag to prompt for pass
+      server: "{{ inventory_hostname }}"
+      user: "{{ ansible_user }}"
+      validate_certs: no
+      transport: cli
+  #connection: local
+  collections:
+    - f5networks.f5_module
+  tasks:
+  - name: run show version on remote devices
+    bigip_command:
+      commands: show sys version
+      provider: "{{ provider }}"
+    delegate_to: localhost
+    register: facts_result
+
+  - name: Display the results
+    debug:
+      var: facts_result
