@@ -5,12 +5,12 @@
   tasks:
   - name: set eos ntp server
     eos_config:
-      lines: ntp server {{ ntp_host }}
+      lines: ntp server "{{ ntp_host }}"
     when: ansible_network_os == 'eos'
   - name: set ios ntp server
     cisco.ios.ios_ntp:
       #server: metadata.google.internal
-      server: {{ ntp_host }}
+      server: "{{ ntp_host }}"
       logging: false
       state: present
     when: ansible_network_os == 'ios'
@@ -18,7 +18,7 @@
     junos_command:
       commands:
         - config
-        - set system ntp server {{ ntp_host }}
+        - set system ntp server "{{ ntp_host }}"
         - commit
     when: ansible_network_os == 'junos'
 ...

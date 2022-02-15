@@ -1,0 +1,26 @@
+spun up GCP instances from marketplace using f5-bigip-16-1-2-1-0-0-10-byol-ltm-1boot-loc-211222202138
+
+got trial license: in this mail:
+You're ready to start your free 30-day trial.
+
+
+Thank you for requesting a trial. Below are the registration keys you'll need to get started. These keys expire 30 days from today if not activated.
+
+BIG-IP Registration key(s): 
+MRLMJ-TJJBH-LSZOD-CLWEQ-NLHXTLZ (LTM, Per App VE, 3 Instances)
+HVXDM-CDQJS-KWRSC-BIVQL-OVGICQQ (Service Scaling VE)
+
+BIG-IQ Registration key(s): 
+WUEJY-BZLKHC-HGH-CRFPNFX-NQESHTF (BIG-IQ Data Collection Device)
+RLIZR-YPHWDQ-GZN-CPHUINO-GVNNXPP (BIG-IQ Console Node)
+
+Evaluation duration: 30 days
+
+Contact: andreas.stollar@gdt.com
+
+Before you begin, please review the documentation and download the appropriate software for your environment. https://devcentral.f5.com/s/articles/getting-started-with-big-ip-ve-trial-22469
+
+Thank you,
+F5 Networks, Inc.
+###################################
+Only the service scaling VE key worked.
