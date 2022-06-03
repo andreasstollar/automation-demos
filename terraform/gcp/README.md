@@ -22,9 +22,29 @@ brew install google-cloud-sdk
 ## Authentication
 Set up credentials
 https://cloud.google.com/docs/authentication/getting-started
+### New method:
+```
+andreasstollar@corundum:~/work/terraform/gcp/rhel9$ gcloud auth login
+Your browser has been opened to visit:
+
+    https://accounts.google.com/o/oauth2/auth?response_type=code&client_id=32555940559.apps.googleusercontent.com&redirect_uri=http%3A%2F%2Flocalhost%3A8085%2F&scope=openid+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fcloud-platform+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fappengine.admin+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fsqlservice.login+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fcompute+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Faccounts.reauth&state=1UtZnPKMLGDRQ4LtvWm2btnCXt2AHr&access_type=offline&code_challenge=9v7inIjIZ7joU88lfoSAxOMqVpMD_ynFVbQawbyCDw0&code_challenge_method=S256
+
+
+You are now logged in as [andreas.stollar@gdt.com].
+Your current project is [awesome-tube-294518].  You can change this setting by running:
+  $ gcloud config set project PROJECT_ID
+
+
+To take a quick anonymous survey, run:
+  $ gcloud survey
+```
+
+### Below is older method
 create service account, and download .json key, store on your laptop in location below
 
 export GOOGLE_APPLICATION_CREDENTIALS="$HOME/.gcp/GDT_compute_svc_acct.json"
+
+
 
 ## Basic Usage
 Copy `variables.tf`, `main.tf`, and one of the instance files to a temporary directory. Update variables as needed, then run:
