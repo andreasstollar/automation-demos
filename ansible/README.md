@@ -64,22 +64,25 @@ b'\r\nWindows IP Configuration\r\n\r\n\r\nEthernet adapter Ethernet:\r\n\r\n   C
 
 ## Tips, Traps and Tricks
 
-Output all facts for a host, note that it doesn't seem to work against a host
+####Output all facts for a host, note that it doesn't seem to work against a host
 ```
 ansible <HOSTGROUP> -m setup
 ```
 
-Convert .ini to .yml
+####Some info on ansible playbooks to set up an Illumio PCE
+[https://docs.illumio.com/core/22.2/Content/LandingPages/Guides/ansible-playbooks-for-pce.htm](https://docs.illumio.com/core/22.2/Content/LandingPages/Guides/ansible-playbooks-for-pce.htm)
+
+####Convert .ini to .yml
 ```
 ansible-inventory -i inventory.ini -y --list >inventory.yml
 ```
 
-use ansible-lint, install with brew or package manager
+####Use ansible-lint, install with brew or package manager
 ```
 ansible-lint <playbook>
 ```
 
-Mac OSX Users! Ansible may crash on you with an ugly error: 
+####Mac OSX Users! Ansible may crash on you with an ugly error: 
 ```
 objc[38892]: +[__NSCFConstantString initialize] may have been in progress in another thread when fork() was called. We cannot safely call it or ignore it in the fork() child process. Crashing instead. Set a breakpoint on objc_initializeAfterForkError to debug.```
 To Resolve, disable Mac OS thread saftey with this `export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES`
