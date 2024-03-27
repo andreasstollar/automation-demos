@@ -1,0 +1,13 @@
+---
+- hosts: all
+  vars:
+    testfile: Test_File.txt
+  serial: 20
+  tasks:
+    - name: scp test file
+      copy:
+        src: "roles/common/files/{{ testfile }}"
+        dest: /home/prosup2/
+        owner: prosup2
+        group: mipstec
+        mode: '0644'
