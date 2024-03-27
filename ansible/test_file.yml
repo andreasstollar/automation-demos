@@ -1,0 +1,8 @@
+---
+- hosts: all
+  tasks:
+  - name: create file
+    copy:
+      dest: "/home/prosup2/Test_File.txt"
+      content: |
+         It is sample file
