@@ -5,4 +5,4 @@
     copy:
       dest: "/home/prosup2/Test_File.txt"
       content: |
-         It is sample file
+         It is sample file, that I modified today, 2024-04-01
