@@ -1,8 +1,16 @@
 ---
 - hosts: all
   tasks:
+  - name: Run a shell command and register its output as a variable
+    ansible.builtin.shell: /bin/date
+    register: date_result
   - name: create file
+    become: true
+    become_user: root
     copy:
-      dest: "/home/prosup2/Test_File.txt"
+      dest: "/root/Test_File.txt"
       content: |
-         It is sample file, that I modified today, 2024-04-01
+         This is sample file, that was modified on {{ date_result["stdout"] }}
+  - name: Display the results
+    debug:
+      var: date_result
