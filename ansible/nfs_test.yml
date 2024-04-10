@@ -1,0 +1,22 @@
+---
+- hosts: all
+  serial: 20
+  tasks:
+  - name: Create mount directory for univa tools
+    ansible.builtin.file:
+      path: /mips/tools/univa
+      state: directory
+      owner: root
+      group: root
+      mode: '0755'
+    become: true
+    become_user: root
+  - name: Mount an NFS volume !! posix mount not in cli ansible, need to test in AWX
+    ansible.posix.mount:
+      src: banaf8c:/vol/univa
+      path: /mips/tools/univa
+      opts: rw
+      state: mounted
+      fstype: nfs
+    become: true
+    become_user: root
