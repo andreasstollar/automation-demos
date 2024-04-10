@@ -37,7 +37,8 @@
     become_user: root
   - name: copy init script
     ansible.builtin.copy:
-      remote_src: /mips/tools/univa/8.2.1/default/common/sgeexecd
+      remote_src: true
+      src: /mips/tools/univa/8.2.1/default/common/sgeexecd
       dest: /etc/init.d/sgeexecd.MIPS_US_8_2_1
       owner: root
       group: root
