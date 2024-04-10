@@ -1,0 +1,52 @@
+---
+- hosts: all
+  serial: 20
+  tasks:
+  - name: Create mount directory for univa tools
+    ansible.builtin.file:
+      path: /mips/tools/univa
+      state: directory
+      owner: root
+      group: root
+      mode: '0755'
+    become: true
+    become_user: root
+#  - name: Mount an NFS volume !! posix mount not in cli ansible, need to test in AWX
+#    ansible.posix.mount:
+#      src: 10.20.75.58:/vol/univa
+#      path: /mips/tools/univa
+#      opts: rw
+#      state: mounted
+#      fstype: nfs
+#    become: true
+#    become_user: root
+  - name: Create spool directory
+    ansible.builtin.file:
+      path: /var/ge.8.2.1/{{ inventory_hostname_short }}
+      state: directory
+      owner: root
+      group: root
+      mode: '0755'
+    become: true
+    become_user: root
+  - name: Run the automated installer
+    ansible.builtin.script:
+      cmd: /mips/tools/univa/8.2.1/inst_sge -x -auto /mips/tools/univa/8.2.1/util/install_modules/mipsdrtest602.conf 
+      chdir: /mips/tools/univa/8.2.1
+    become: true
+    become_user: root
+  - name: copy init script
+    ansible.builtin.copy:
+      src: /mips/tools/univa/8.2.1/default/common/sgeexecd
+      dest: /etc/init.d/sgeexecd.MIPS_US_8_2_1
+      owner: root
+      group: root
+      mode: '0755'
+    become: true
+    become_user: root
+  - name: Enable grid service
+    ansible.builtin.service:
+      name: sgeexecd.MIPS_US_8_2_1
+      enabled: yes
+    become: true
+    become_user: root
