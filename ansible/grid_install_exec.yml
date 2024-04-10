@@ -30,7 +30,7 @@
     become: true
     become_user: root
   - name: Run the automated installer
-    ansible.builtin.script:
+    ansible.builtin.shell:
       cmd: /mips/tools/univa/8.2.1/inst_sge -x -auto /mips/tools/univa/8.2.1/util/install_modules/mipsdrtest602.conf 
       chdir: /mips/tools/univa/8.2.1
     become: true
