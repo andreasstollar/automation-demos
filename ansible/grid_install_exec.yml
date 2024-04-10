@@ -11,15 +11,15 @@
       mode: '0755'
     become: true
     become_user: root
-#  - name: Mount an NFS volume !! posix mount not in cli ansible, need to test in AWX
-#    ansible.posix.mount:
-#      src: 10.20.75.58:/vol/univa
-#      path: /mips/tools/univa
-#      opts: rw
-#      state: mounted
-#      fstype: nfs
-#    become: true
-#    become_user: root
+  - name: Mount the tools nfs volume
+    ansible.posix.mount:
+      src: banaf8c:/vol/univa
+      path: /mips/tools/univa
+      opts: rw
+      state: mounted
+      fstype: nfs
+    become: true
+    become_user: root
   - name: Create spool directory
     ansible.builtin.file:
       path: /var/ge.8.2.1/{{ inventory_hostname_short }}
