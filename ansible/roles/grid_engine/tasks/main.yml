@@ -26,7 +26,7 @@
     mode: '0755'
   become: true
   become_user: root
-- name: 'Configure Chrony'
+- name: Build Configuration Template
   become: yes
   template:
     src: "inst_template.conf.j2"
@@ -41,7 +41,7 @@
     chdir: /mips/tools/univa/8.2.1
   become: true
   become_user: root
-- name: copy init script
+- name: Copy init script
   ansible.builtin.copy:
     remote_src: true
     src: /mips/tools/univa/8.2.1/default/common/sgeexecd
