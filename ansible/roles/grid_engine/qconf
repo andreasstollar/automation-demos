@@ -1,0 +1,178 @@
+usage: qconf [options]
+   [-aattr obj_nm attr_nm val obj_id_list]  add to a list attribute of an object
+   [-Aattr obj_nm fname obj_id_list]        add to a list attribute of an object
+   [-acal calendar_name]                    add a new calendar
+   [-Acal fname]                            add a new calendar from file
+   [-ackpt ckpt_name]                       add a ckpt interface definition
+   [-Ackpt fname]                           add a ckpt interface definition from file
+   [-aconf host_list]                       add configurations
+   [-Aconf file_list]                       add configurations from file_list
+   [-adjs session_name]                     add a DRMAA2 job session
+   [-ajc jc_name]                           add job class
+   [-Ajc file]                              add job class from file
+   [-ae [exec_server_template]]             add an exec host using a template
+   [-Ae fname]                              add an exec host from file
+   [-ah hostname_list]                      add an administrative host
+   [-ahgrp group]                           add new host group entry
+   [-Ahgrp file]                            add new host group entry from file
+   [-arqs [rqs_list]]                       add resource quota set(s)
+   [-Arqs fname]                            add resource quota set(s) from file
+   [-am user_list]                          add user to manager list
+   [-ao user_list]                          add user to operator list
+   [-ap pe-name]                            add a new parallel environment
+   [-Ap fname]                              add a new parallel environment from file
+   [-aprj]                                  add project
+   [-Aprj fname]                            add project from file
+   [-aq [queue_name]]                       add a new cluster queue
+   [-Aq fname]                              add a queue from file
+   [-as hostname_list]                      add a submit host
+   [-asi]                                   add a new session
+   [-Asi fname]                             add a new session from file
+   [-astnode node_shares_list]              add sharetree node(s)
+   [-astree]                                create/modify the sharetree
+   [-Astree fname]                          create/modify the sharetree from file
+   [-at thread_name]                        add/start qmaster thread
+   [-au user_list listname_list]            add user(s) to userset list(s)
+   [-Au fname]                              add userset from file
+   [-auser]                                 add user
+   [-Auser fname]                           add user from file
+   [-clearusage]                            clear all user/project sharetree usage
+   [-cq destin_id_list]                     clean queue
+   [-csi]                                   create a new session with default parameters
+   [-dattr obj_nm attr_nm val obj_id_list]  delete from a list attribute of an object
+   [-Dattr obj_nm fname obj_id_list]        delete from a list attribute of an object
+   [-dcal calendar_name]                    delete calendar
+   [-dckpt ckpt_name]                       delete ckpt interface definition
+   [-dconf host_list]                       delete local configurations
+   [-ddjs session_name]                     delete a DRMAA2 job session
+   [-de host_list]                          delete exec host
+   [-dh host_list]                          delete administrative host
+   [-dhgrp group]                           delete host group entry
+   [-djc jc_name]                           delete job class entry
+   [-drqs rqs_list]                         delete resource quota set(s)
+   [-dm user_list]                          delete user from manager list
+   [-do user_list]                          delete user from operator list
+   [-dp pe-name]                            delete parallel environment
+   [-dprj project_list]                     delete project
+   [-dq destin_id_list]                     delete queue
+   [-ds host_list]                          delete submit host
+   [-dsi session_id]                        delete a session
+   [-dstnode node_list]                     delete sharetree node(s)
+   [-dstree]                                delete the sharetree
+   [-du user_list listname_list]            delete user(s) from userset list(s)
+   [-dul listname_list]                     delete userset list(s) completely
+   [-duser user_list]                       delete user(s)
+   [-help]                                  print this help
+   [-ke[j] host_list                        shutdown execution daemon(s)
+   [-k{m|s}]                                shutdown master|scheduling daemon
+   [-kec evid_list]                         kill event client
+   [-kt thread_name]                        kill qmaster thread
+   [-mattr obj_nm attr_nm val obj_id_list]  modify an attribute (or element in a sublist) of an object
+   [-Mattr obj_nm fname obj_id_list]        modify an attribute (or element in a sublist) of an object
+   [-mc ]                                   modify complex attributes
+   [-mckpt ckpt_name]                       modify a ckpt interface definition
+   [-Mc fname]                              modify complex attributes from file
+   [-mcal calendar_name]                    modify calendar
+   [-Mcal fname]                            modify calendar from file
+   [-Mckpt fname]                           modify a ckpt interface definition from file
+   [-mconf [host_list|global]]              modify configurations
+   [-Mconf file_list]                       modify configurations from file_list
+   [-me server]                             modify exec server
+   [-Me fname]                              modify exec server from file
+   [-mhgrp group]                           modify host group entry
+   [-Mhgrp file]                            modify host group entry from file
+   [-mjc jc_name]                           modify job class entry
+   [-Mjc file]                              modify job_class entry from file
+   [-mrqs [rqs_list]]                       modify resource quota set(s)
+   [-Mrqs fname [rqs_list]]                 modify resource quota set(s) from file
+   [-mp pe-name]                            modify a parallel environment
+   [-Mp fname]                              modify a parallel environment from file
+   [-mprj project]                          modify a project
+   [-Mprj fname]                            modify project from file
+   [-mq queue]                              modify a queue
+   [-Mq fname]                              modify a queue from file
+   [-msconf]                                modify scheduler configuration
+   [-Msconf fname]                          modify scheduler configuration from file
+   [-msi session_id]                        modify a session
+   [-Msi fname]                             modify a session from file
+   [-mstnode node_shares_list]              modify sharetree node(s)
+   [-Mstree fname]                          modify/create the sharetree from file
+   [-mstree]                                modify/create the sharetree
+   [-mu listname_list]                      modify the given userset list
+   [-Mu fname]                              modify userset from file
+   [-muser user]                            modify a user
+   [-Muser fname]                           modify a user from file
+   [-purge obj_nm3 attr_nm objectname]      deletes attribute from object_instance
+   [-stl]                                   show thread list
+   [-rattr obj_nm attr_nm val obj_id_list]  replace a list attribute of an object
+   [-Rattr obj_nm fname obj_id_list]        replace a list attribute of an object
+   [-sc]                                    show complex attributes
+   [-scal calendar_name]                    show given calendar
+   [-scall]                                 show a list of all calendar names
+   [-sckpt ckpt_name]                       show ckpt interface definition
+   [-sckptl]                                show all ckpt interface definitions
+   [-sconf [host_list|global]]              show configurations
+   [-sconfl]                                show a list of all local configurations
+   [-sdjs]                                  show details of a DRMAA2 job session
+   [-sdjsl]                                 show a list of all usable DRMAA2 job sessions
+   [-se server]                             show given exec server
+   [-secl]                                  show event client list
+   [-sec evc_list]                          show event client information
+   [-sel]                                   show a list of all exec servers
+   [-sep]                                   show a list of all licensed processors
+   [-sh]                                    show a list of all administrative hosts
+   [-shgrp group]                           show host group
+   [-shgrp_tree group]                      show host group and used hostgroups as tree
+   [-shgrp_resolved group]                  show host group with resolved hostlist
+   [-shgrpl]                                show host group list
+   [-si session_id]                         execute UGE requests as part of the specified session
+   [-sjc jc_name]                           show job class
+   [-sjcl]                                  show job class list
+   [-sds]                                   show detached settings
+   [-srqs [rqs_list]]                       show resource quota set(s)
+   [-srqsl]                                 show resource quota set list
+   [-sm]                                    show a list of all managers
+   [-so]                                    show a list of all operators
+   [-sobjl obj_nm2 attr_nm val]             show objects which match the given value
+   [-sp pe-name]                            show a parallel environment
+   [-spl]                                   show all parallel environments
+   [-sprj project]                          show a project
+   [-sprjl]                                 show a list of all projects
+   [-sq [destin_id_list]]                   show the given queue
+   [-sql]                                   show a list of all queues
+   [-ss]                                    show a list of all submit hosts
+   [-ssi session_id]                        show parameters of a session
+   [-ssil]                                  show list of all existing sessions
+   [-ss]                                    show a list of all submit hosts
+   [-sss]                                   show scheduler state
+   [-ssconf]                                show scheduler configuration
+   [-sstnode node_list]                     show sharetree node(s)
+   [-rsstnode node_list]                    show sharetree node(s) and its children
+   [-sst]                                   show a formated sharetree
+   [-sstree]                                show the sharetree
+   [-su listname_list]                      show the given userset list
+   [-suser user_list]                       show user(s)
+   [-sul]                                   show a list of all userset lists
+   [-suserl]                                show a list of all users
+   [-tsm]                                   trigger scheduler monitoring
+
+complex_list            complex[,complex,...]
+destin_id_list          queue[,queue,...]
+hostname_list           hostname[,hostname,...]
+listname_list           listname[,listname,...]
+rqs_list                rqs_name[,rqs_name,...]
+node_list               node_path[,node_path,...]
+node_path               [/]node_name[[/.]node_name...]
+node_shares_list        node_path=shares[,node_path=shares,...]
+user_list               user[,user,...]
+obj_nm                  "queue"|"exechost"|"pe"|"ckpt"|"hostgroup"|"resource_quota"
+attr_nm                 (see man pages)
+obj_id_list             objectname [ objectname ...]
+project_list            project[,project,...]
+evid_list               all | evid[,evid,...]
+evc_list                all | {evid|name[,evid|name,...]}
+host_list               all | hostname[,hostname,...]
+obj_nm2                 "queue"|"queue_domain"|"queue_instance"|"exechost"
+obj_nm3                 "queue"
+thread_name             "reader"|"scheduler"|"jvm"|"lothread"
+session_id              ID of a UGE session

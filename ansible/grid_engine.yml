@@ -1,0 +1,5 @@
+---
+# file: grid_engine.yml
+- hosts: all
+  roles:
+    - grid_engine
