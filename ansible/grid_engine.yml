@@ -1,5 +1,6 @@
 ---
 # file: grid_engine.yml
 - hosts: all
+  serial: 20
   roles:
     - grid_engine
