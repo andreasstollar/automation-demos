@@ -1,62 +1,59 @@
 ---
-- hosts: all
-  serial: 20
-  tasks:
-  - name: Create mount directory for univa tools
-    ansible.builtin.file:
-      path: /mips/tools/univa
-      state: directory
-      owner: root
-      group: root
-      mode: '0755'
-    become: true
-    become_user: root
-  - name: Mount the tools nfs volume
-    ansible.posix.mount:
-      src: banaf8c:/vol/univa
-      path: /mips/tools/univa
-      opts: rw
-      state: mounted
-      fstype: nfs
-    become: true
-    become_user: root
-  - name: Create spool directory
-    ansible.builtin.file:
-      path: /var/ge.8.2.1/{{ inventory_hostname_short }}
-      state: directory
-      owner: root
-      group: root
-      mode: '0755'
-    become: true
-    become_user: root
-  - name: 'Configure Chrony'
-    become: yes
-    template:
-      src: "inst_template.conf.j2"
-      dest: "/root/{{ inventory_hostname_short }}.conf"
-      owner: root
-      group: root
-      mode: '0644'
-      backup: yes
-  - name: Run the automated installer
-    ansible.builtin.shell:
-      cmd: /mips/tools/univa/8.2.1/inst_sge -x -auto /root/{{ inventory_hostname_short }}.conf 
-      chdir: /mips/tools/univa/8.2.1
-    become: true
-    become_user: root
-  - name: copy init script
-    ansible.builtin.copy:
-      remote_src: true
-      src: /mips/tools/univa/8.2.1/default/common/sgeexecd
-      dest: /etc/init.d/sgeexecd.MIPS_US_8_2_1
-      owner: root
-      group: root
-      mode: '0755'
-    become: true
-    become_user: root
-  - name: Enable grid service
-    ansible.builtin.service:
-      name: sgeexecd.MIPS_US_8_2_1
-      enabled: yes
-    become: true
-    become_user: root
+- name: Create mount directory for univa tools
+  ansible.builtin.file:
+    path: /mips/tools/univa
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+  become: true
+  become_user: root
+- name: Mount the tools nfs volume
+  ansible.posix.mount:
+    src: banaf8c:/vol/univa
+    path: /mips/tools/univa
+    opts: rw
+    state: mounted
+    fstype: nfs
+  become: true
+  become_user: root
+- name: Create spool directory
+  ansible.builtin.file:
+    path: /var/ge.8.2.1/{{ inventory_hostname_short }}
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+  become: true
+  become_user: root
+- name: 'Configure Chrony'
+  become: yes
+  template:
+    src: "inst_template.conf.j2"
+    dest: "/root/{{ inventory_hostname_short }}.conf"
+    owner: root
+    group: root
+    mode: '0644'
+    backup: yes
+- name: Run the automated installer
+  ansible.builtin.shell:
+    cmd: /mips/tools/univa/8.2.1/inst_sge -x -auto /root/{{ inventory_hostname_short }}.conf 
+    chdir: /mips/tools/univa/8.2.1
+  become: true
+  become_user: root
+- name: copy init script
+  ansible.builtin.copy:
+    remote_src: true
+    src: /mips/tools/univa/8.2.1/default/common/sgeexecd
+    dest: /etc/init.d/sgeexecd.MIPS_US_8_2_1
+    owner: root
+    group: root
+    mode: '0755'
+  become: true
+  become_user: root
+- name: Enable grid service
+  ansible.builtin.service:
+    name: sgeexecd.MIPS_US_8_2_1
+    enabled: yes
+  become: true
+  become_user: root
