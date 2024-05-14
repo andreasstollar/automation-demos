@@ -40,7 +40,7 @@
       backup: yes
   - name: Run the automated installer
     ansible.builtin.shell:
-      cmd: /mips/tools/univa/8.2.1/inst_sge -x -auto /mips/tools/univa/8.2.1/util/install_modules/{{ inventory_hostname_short }}.conf 
+      cmd: /mips/tools/univa/8.2.1/inst_sge -x -auto /root/{{ inventory_hostname_short }}.conf 
       chdir: /mips/tools/univa/8.2.1
     become: true
     become_user: root
