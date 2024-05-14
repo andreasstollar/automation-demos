@@ -11,4 +11,4 @@ Samples for updates on Linux, IOS, EOS, and JunOS hosts.
 Samples for spinning up networks, security groups and vms in Azure, AWS and GCP(some)
 
 ### Python
-Nothing to see here (yet)
+Some python scripts I have worked on over the years. Here for reminders
