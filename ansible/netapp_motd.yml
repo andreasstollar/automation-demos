@@ -1,0 +1,17 @@
+---
+- hosts: localhost
+  name: ONTAP
+  collections:
+  - netapp.ontap
+  gather_facts: false
+  tasks:
+  - name: Verifying the MOTD
+    netapp.ontap.na_ontap_motd:
+      state: present
+      motd_message: Set by Ansible
+      vserver: mipscdr
+      hostname: 10.200.1.10
+      username: admin
+      password: Netapp1!
+      https: true
+      validate_certs: false
