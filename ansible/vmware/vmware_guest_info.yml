@@ -5,11 +5,11 @@
   tasks:
   - name: Gather guest vm info
     vmware.vmware.guest_info:
-      hostname: "vcenter.ccu.loc"
+      hostname: "vcenter.fqdn"
       username: "{{ ansible_user }}"
       password: "{{ ansible_password }}"
       validate_certs: false
-      guest_name: "TST-ANS2022-01"
+      guest_name: "name of guest"
     register: search_results
   - name: show registered output
     ansible.builtin.debug:
