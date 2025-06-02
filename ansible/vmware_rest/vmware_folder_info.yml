@@ -1,9 +1,9 @@
 ---
-- hosts: all
+- hosts: localhost
   gather_facts: no
   connection: local
   tasks:
-  - name: Build a list of all the folders
+  - name: Build a list of localhost the folders
     vmware.vmware_rest.vcenter_folder_info:
       vcenter_hostname: vcenter.fqdn
       vcenter_username: "{{ ansible_user }}"

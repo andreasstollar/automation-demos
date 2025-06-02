@@ -1,9 +1,9 @@
 ---
-- hosts: all
+- hosts: localhost
   gather_facts: no
   connection: local
   tasks:
-  - name: Build a list of all the datastores
+  - name: Build a list of localhost the datastores
     vmware.vmware_rest.vcenter_datastore_info:
       vcenter_hostname: vcenter.fqdn
       vcenter_username: "{{ ansible_user }}"
