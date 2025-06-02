@@ -1,0 +1,16 @@
+---
+- hosts: all
+  gather_facts: no
+  connection: local
+  tasks:
+  - name: Gather guest vm info
+    vmware.vmware.guest_info:
+      hostname: "vcenter.ccu.loc"
+      username: "{{ ansible_user }}"
+      password: "{{ ansible_password }}"
+      validate_certs: false
+      guest_name: "TST-ANS2022-01"
+    register: search_results
+  - name: show registered output
+    ansible.builtin.debug:
+      var: search_results
