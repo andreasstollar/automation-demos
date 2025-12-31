@@ -1,0 +1,22 @@
+---
+- hosts: all
+  gather_facts: yes
+  tasks:
+    - name: Set DD_LOGS_INJECTION=true in Registry
+      ansible.windows.win_regedit:
+        path: HKLM:\SYSTEM\CurrentControlSet\Services\WAS
+        name: Environment
+        data: 
+          - COR_ENABLE_PROFILING=1
+          - COR_PROFILER={846F5F1C-F9AE-4B07-969E-05C26BC060D8}
+          - CORECLR_ENABLE_PROFILING=1
+          - CORECLR_PROFILER={846F5F1C-F9AE-4B07-969E-05C26BC060D8}
+          - DD_LOGS_INJECTION=true
+          - DD_RUNTIME_METRICS=true
+        type: multistring
+
+    - name: Restart IIS
+      ansible.windows.win_service:
+        name: was
+        state: restarted
+        force_dependent_services: true

@@ -1,0 +1,43 @@
+---
+- name: Search for all available Windows and Generate Report
+  block:
+    - name: Search for Updates
+      ansible.windows.win_updates:
+        category_names: '*'
+        state: searched
+      register: update_results
+
+    - name: Nested Inner Block
+      block:
+      - name: Build Report File
+        local_action:
+          module: ansible.builtin.lineinfile
+          dest: update_report.txt
+          create: true
+          line: |
+            hostname: {{ inventory_hostname }}
+            {% for k in update_results.updates %}
+            {{ update_results.updates[k].title }}
+            {% endfor %}
+
+- name: Display Output
+  ansible.builtin.debug:
+    msg: |
+      {% for k in update_results.updates %}
+      {{ update_results.updates[k].title }}
+      {% endfor %}
+  register: final_report
+
+- name: Email results
+  local_action:
+    module: community.general.mail
+    host: ops-mail-01.ccu.loc
+    port: 25
+    to: "{{ mail_to }}"
+    from: ansible@columbiacu.org
+    subject: Windows Updates Report for "{{ ansible_date_time.date }}"
+    body: "{{ lookup('file', 'update_report.txt') }}"
+    #attach: update_report.txt
+  run_once: true
+
+

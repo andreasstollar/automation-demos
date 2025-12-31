@@ -1,0 +1,37 @@
+- name: Format start time
+  command: "date -d @{{ item.start_epoch }} +'%b %d, %Y %I:%M %p %Z'"
+  register: start_fmt
+  loop: "{{ oncall_details }}"
+  loop_control:
+    loop_var: item
+
+- name: Format end time
+  command: >-
+    {{ (item.end_epoch is not none)
+       | ternary("date -d @" ~ item.end_epoch|string ~ " +'%b %d, %Y %I:%M %p %Z'", "echo N/A") }}
+  register: end_fmt
+  loop: "{{ oncall_details }}"
+  loop_control:
+    loop_var: item
+
+- name: Initialize oncall summary
+  set_fact:
+    oncall_summary: ""
+
+- name: Append formatted summary lines
+  set_fact:
+    oncall_summary: "{{ oncall_summary + summary_line }}"
+  vars:
+    summary_line: |
+      <table style="font-family: Arial, sans-serif; font-size: 14px;">
+        <tr><td>👤 <strong>Engineer</strong></td><td>{{ item.user.summary }}</td></tr>
+        <tr><td>📈 <strong>Level</strong></td><td>{{ item.escalation_level }}</td></tr>
+        <tr><td>📅 <strong>Start</strong></td><td>{{ start_fmt.results[idx].stdout }}</td></tr>
+        <tr><td>📅 <strong>End</strong></td><td>{{ end_fmt.results[idx].stdout }}</td></tr>
+        <tr><td>📞 <strong>Call</strong></td><td><a href="tel:3608914090">360-891-4090</a></td></tr>
+      </table>
+      <br/>
+  loop: "{{ oncall_details }}"
+  loop_control:
+    loop_var: item
+    index_var: idx

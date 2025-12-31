@@ -1,0 +1,202 @@
+name: AnsibleLintingPipeline_$(Build.SourceBranchName)_$(Date:yyyyMMdd)$(Rev:.r)
+
+trigger:
+  branches:
+    include:
+      - main
+
+pr:
+  branches:
+    include:
+      - main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  PIP_PACKAGES: "ansible==9.* ansible-lint==24.* yamllint==1.*"
+
+steps:
+  - checkout: self
+    fetchDepth: 0
+    persistCredentials: true
+    clean: true
+
+  - task: "Checkmarx AST@3"
+    displayName: "SAST: Checkmarx AST"
+    inputs:
+      CheckmarxService: "ADO"
+      projectName: "CCUDevOps/DevOps/$(Build.Repository.Name)"
+      branchName: "$(Build.SourceBranchName)"
+      additionalParams: "--report-format json"
+
+  - task: SonarCloudPrepare@3
+    inputs:
+      SonarQube: 'Sonar'
+      organization: 'ccudevops'
+      scannerMode: 'cli'
+      configMode: 'manual'
+      cliProjectKey: 'CCUDevOps_AnsibleInfraPlaybooks'
+      cliProjectName: 'AnsibleInfraPlaybooks'
+      cliSources: '.'
+
+  - task: SonarCloudAnalyze@3
+    inputs:
+      jdkversion: 'JAVA_HOME_17_X64'
+
+  - task: SonarCloudPublish@3
+    inputs:
+      pollingTimeoutSec: '300'
+
+  - task: UsePythonVersion@0
+    displayName: "Use Python 3.12"
+    inputs:
+      versionSpec: "3.12"
+
+  - task: Bash@3
+    displayName: "Install Ansible + linters"
+    inputs:
+      targetType: inline
+      script: |
+        set -Eeuo pipefail
+        python -m pip install --upgrade pip
+        # Don't quote; let bash split into separate args:
+        pip install ansible==9.* ansible-lint==24.* yamllint==1.*
+        # (Alternative if you keep the variable)
+        # pip install ${PIP_PACKAGES}
+
+  - task: Bash@3
+    displayName: "Install Ansible Galaxy collections (if any)"
+    inputs:
+      targetType: inline
+      script: |
+        set -Eeuo pipefail
+        if [ -f requirements.yml ]; then
+          ansible-galaxy collection install -r requirements.yml
+        elif [ -f collections/requirements.yml ]; then
+          ansible-galaxy collection install -r collections/requirements.yml
+        else
+          echo "No Galaxy requirements file found; skipping."
+        fi
+
+  # OPTION A: On main builds, scan ALL YAML; otherwise, diff vs PR target (default main)
+  - task: Bash@3
+    displayName: "Detect changed YAML files"
+    inputs:
+      targetType: inline
+      script: |
+        set -Eeuo pipefail
+        BRANCH="${BUILD_SOURCEBRANCH#refs/heads/}"
+
+        git fetch origin +refs/heads/*:refs/remotes/origin/*
+
+        if [ "$BRANCH" = "main" ]; then
+          echo "main build detected — scanning all YAML files."
+          git ls-files "*.yml" "*.yaml" > changed_files.txt || true
+        else
+          BASE_REF="${SYSTEM_PULLREQUEST_TARGETBRANCH:-refs/heads/main}"
+          BASE_BRANCH="origin/${BASE_REF#refs/heads/}"
+          echo "Diffing against $BASE_BRANCH"
+          git diff --name-only "$BASE_BRANCH"...HEAD | grep -E '\.ya?ml$' > changed_files.txt || true
+        fi
+
+        echo "Changed YAML files:"
+        if [ -s changed_files.txt ]; then cat changed_files.txt; else echo "(none found)"; fi
+
+  - task: Bash@3
+    displayName: "Run yamllint"
+    condition: succeededOrFailed()
+    inputs:
+      targetType: inline
+      script: |
+        set -Eeuo pipefail
+        if [ ! -s changed_files.txt ]; then
+          echo "No YAML files changed. Skipping yamllint."
+          exit 0
+        fi
+
+        status=0
+        while IFS= read -r file; do
+          if [ -n "$file" ] && [ -f "$file" ]; then
+            if [ -f .yamllint ]; then
+              yamllint -c .yamllint "$file" || status=$?
+            else
+              yamllint "$file" || status=$?
+            fi
+          else
+            echo "Skipping invalid or missing file: '$file'"
+          fi
+        done < changed_files.txt
+        exit $status
+
+  - task: Bash@3
+    displayName: "Detect Ansible playbooks"
+    condition: succeededOrFailed()
+    inputs:
+      targetType: inline
+      script: |
+        set -Eeuo pipefail
+        : > changed_playbooks.txt
+        if [ ! -s changed_files.txt ]; then
+          echo "No YAML files changed. Skipping playbook detection."
+          exit 0
+        fi
+        while IFS= read -r file; do
+          if [ -f "$file" ]; then
+            # Heuristic: playbooks typically contain 'hosts:' or 'import_playbook:'
+            if grep -Eq '^\s*-?\s*(hosts|import_playbook):' "$file"; then
+              echo "$file" >> changed_playbooks.txt
+            fi
+          fi
+        done < changed_files.txt
+
+        echo "Detected Ansible playbooks:"
+        if [ -s changed_playbooks.txt ]; then cat changed_playbooks.txt; else echo "(none)"; fi
+
+  - task: Bash@3
+    displayName: "Run ansible-lint"
+    condition: succeededOrFailed()
+    inputs:
+      targetType: inline
+      script: |
+        set -Eeuo pipefail
+        if [ ! -s changed_files.txt ]; then
+          echo "No YAML files changed. Skipping ansible-lint."
+          exit 0
+        fi
+
+        status=0
+        while IFS= read -r file; do
+          if [ -n "$file" ] && [ -f "$file" ]; then
+            if [ -f .ansible-lint ]; then
+              ansible-lint -c .ansible-lint "$file" || status=$?
+            else
+              ansible-lint "$file" || status=$?
+            fi
+          else
+            echo "Skipping invalid or missing file: '$file'"
+          fi
+        done < changed_files.txt
+        exit $status
+
+  - task: Bash@3
+    displayName: "Run ansible-playbook --syntax-check (playbooks only)"
+    condition: succeededOrFailed()
+    inputs:
+      targetType: inline
+      script: |
+        set -Eeuo pipefail
+        if [ ! -s changed_playbooks.txt ]; then
+          echo "No Ansible playbooks changed. Skipping syntax-check."
+          exit 0
+        fi
+
+        status=0
+        while IFS= read -r file; do
+          if [ -n "$file" ] && [ -f "$file" ]; then
+            ansible-playbook --syntax-check "$file" || status=$?
+          else
+            echo "Skipping invalid or missing file: '$file'"
+          fi
+        done < changed_playbooks.txt
+        exit $status

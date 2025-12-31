@@ -1,0 +1,14 @@
+---
+- hosts: all
+  gather_facts: no
+  connection: httpapi
+  tasks:
+    - name: Get Domain UUID
+      cisco.fmcansible.fmc_configuration:
+        operation: getAllDomain
+        register_as: domainuuid
+
+# This returns domainuUID: "e276abec-e0f2-11e3-8169-6d9ed49b625f"
+
+
+

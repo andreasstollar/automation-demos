@@ -1,0 +1,27 @@
+- name: Get and email current on-call users for 'IT On-Call Escalation'
+  hosts: localhost
+  gather_facts: false
+
+  vars:
+    pagerduty_token: "{{ lookup('env', 'PAGERDUTY_API_TOKEN') }}"
+    mail_to: "isns@columbiacu.org"
+    mail_from: "ansible@columbiacu.org"
+    smtp_host: "ops-mail-01.ccu.loc"
+    smtp_port: 25
+    page_limit: 100
+    max_pages: 10
+
+  tasks:
+
+    - name: Initialize facts
+      set_fact:
+        offset: 0
+        all_oncalls: []
+        more: true
+
+    - name: Loop over paginated fetches
+      include_tasks: fetch_page.yml
+      loop: "{{ range(0, max_pages) | list }}"
+      loop_control:
+        loop_var: page
+      when: more

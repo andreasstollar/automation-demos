@@ -1,0 +1,15 @@
+---
+- hosts: localhost
+  gather_facts: no
+  connection: local
+  tasks:
+  - name: Build a list of all the networks
+    vmware.vmware_rest.vcenter_network_info:
+      vcenter_hostname: vcenter.ccu.loc
+      vcenter_username: "{{ ansible_user }}"
+      vcenter_password: "{{ ansible_password }}"
+      vcenter_validate_certs: false
+    register: search_results
+  - name: show registered output
+    ansible.builtin.debug:
+      var: search_results

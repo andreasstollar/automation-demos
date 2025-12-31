@@ -1,0 +1,11 @@
+---
+- hosts: localhost
+  gather_facts: no
+  connection: local
+  tasks:
+  - name: Loop over list of vms and run get_snapshot_info tasks
+    include_tasks: get_snapshot_info.yml
+    loop: "{{ vm_name|list }}"
+    loop_control:
+      loop_var: vm
+

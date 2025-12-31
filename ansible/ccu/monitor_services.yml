@@ -1,0 +1,114 @@
+- name: Monitor Windows services from survey input (with unreachable guard)
+  hosts: all
+  gather_facts: false
+
+  vars:
+    restart_services_input: "{{ survey_services | default('', true) }}"
+
+  tasks:
+    # --- Unreachable handling (Option B) ---
+    - name: Check if host is reachable over WinRM
+      ansible.windows.win_ping:
+      register: ping_result
+      ignore_unreachable: true
+      failed_when: false
+
+    - name: Wait briefly if WinRM not responding (transient)
+      ansible.builtin.wait_for_connection:
+        timeout: 120            # total seconds to wait
+        sleep: 10               # seconds between checks
+      when: ping_result is not defined or ping_result.ping is not defined or ping_result.ping != "pong"
+      ignore_unreachable: true
+      failed_when: false
+
+    - name: Re-check WinRM reachability
+      ansible.windows.win_ping:
+      register: ping_result_final
+      ignore_unreachable: true
+      failed_when: false
+
+    - name: Skip this host if still unreachable
+      ansible.builtin.meta: end_host
+      when: >-
+        ping_result_final is not defined or
+        (ping_result_final.ping | default('') != 'pong')
+
+    # --- Normalization of survey input ---
+    - name: Normalize survey input into newline-delimited text
+      ansible.builtin.set_fact:
+        _normalized_text: >-
+          {{
+            (
+              restart_services_input if restart_services_input is string
+              else (restart_services_input | flatten | join('\n'))
+            )
+            | regex_replace('\r\n', '\n')
+            | regex_replace('[,;]+', '\n')
+          }}
+
+    - name: Build flat service list
+      ansible.builtin.set_fact:
+        service_list: >-
+          {{
+            _normalized_text
+            | split('\n')
+            | map('trim')
+            | reject('equalto','')
+            | list
+          }}
+
+    - name: Fail if no services provided
+      ansible.builtin.fail:
+        msg: "No service names were provided."
+      when: service_list | length == 0
+
+    # --- Initialize workflow artifact once ---
+    - name: Initialize artifact list once
+      ansible.builtin.set_stats:
+        data:
+          needs_restart_hosts: []
+      run_once: true
+      delegate_to: localhost
+
+    # --- Check services and decide remediation need ---
+    - name: Query service state on this host - {{ item | string }}
+      ansible.windows.win_service_info:
+        name: "{{ item | string }}"
+      register: svcinfo
+      loop: "{{ service_list }}"
+      loop_control:
+        label: "{{ item | string }}"
+
+    - name: Assume healthy unless proven otherwise
+      ansible.builtin.set_fact:
+        host_needs_restart: false
+
+    - name: Mark host as needing restart if any service missing or not running
+      ansible.builtin.set_fact:
+        host_needs_restart: true
+      when: >
+        ( (item.services | default([]) | length) == 0 )
+        or (
+             (item.services | default([]) | length) > 0
+             and (item.services[0].state | lower) not in ['running','started']
+           )
+      loop: "{{ svcinfo.results }}"
+      loop_control:
+        label: "{{ item.invocation.module_args.name }}"
+
+    - name: Append this host to workflow artifact if it needs restart
+      ansible.builtin.set_stats:
+        data:
+          needs_restart_hosts: "{{ (needs_restart_hosts | default([])) + [inventory_hostname] }}"
+        aggregate: true
+      when: host_needs_restart | bool
+
+    - name: Show status for this host
+      ansible.builtin.debug:
+        msg: "{{ inventory_hostname }} needs restart: {{ host_needs_restart }}"
+
+    # Intentionally fail this host (to trigger workflow On Failure path) only if remediation is needed
+    - name: Fail this host if any listed service is not running
+      ansible.builtin.fail:
+        msg: "One or more services are not running on {{ inventory_hostname }}."
+      when: host_needs_restart | bool

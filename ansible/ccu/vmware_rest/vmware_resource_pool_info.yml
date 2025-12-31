@@ -1,0 +1,16 @@
+---
+- hosts: localhost
+  gather_facts: no
+  connection: local
+  tasks:
+  - name: Get the existing resource pools
+    vmware.vmware_rest.vcenter_resourcepool_info:
+      vcenter_hostname: vcenter.ccu.loc
+      vcenter_username: "{{ ansible_user }}"
+      vcenter_password: "{{ ansible_password }}"
+      vcenter_validate_certs: false
+    register: resource_pools
+
+  - name: show registered output
+    ansible.builtin.debug:
+      var: resource_pools

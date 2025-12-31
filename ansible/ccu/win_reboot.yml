@@ -1,0 +1,23 @@
+- name: Reboot Windows servers selected in survey
+  hosts: all                 # <- static group from your inventory
+  gather_facts: false
+  any_errors_fatal: true
+  serial: 5
+
+  pre_tasks:
+    - name: Assert survey provided at least one host
+      ansible.builtin.assert:
+        that:
+          - target_servers is defined
+          - target_servers | length > 0
+        fail_msg: "Survey 'target_servers' (multi-select) is required and must contain at least one host."
+
+    - name: Show selected hosts
+      ansible.builtin.debug:
+        msg: "{{ target_servers | join(' ') }}"
+
+  roles:
+    - role: windows_reboot
+      when: inventory_hostname in target_servers
+      vars:
+        windows_reboot_reboot_timeout: 900

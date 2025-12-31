@@ -1,0 +1,7 @@
+---
+- hosts: all
+  gather_facts: no
+  connection: ssh
+  tasks:
+  - name: run show version on remote devices
+    ansible.builtin.shell: show version

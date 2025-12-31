@@ -1,0 +1,142 @@
+init_config:
+
+instances:
+
+    ## @param host - string - required
+    ## Host to ping
+    #
+  - host: 172.16.51.230
+    collect_response_time: true
+    tags:
+      - network:ATM
+  - host: 172.16.59.230
+    collect_response_time: true
+    tags:
+      - network:ATM
+  - host: 172.16.43.230
+    collect_response_time: true
+    tags:
+      - network:ATM
+  - host: 172.16.23.230
+    collect_response_time: true
+    tags:
+      - network:ATM
+  - host: 172.16.15.230
+    collect_response_time: true
+    tags:
+      - network:ATM
+  - host: 172.16.11.232
+    collect_response_time: true
+    tags:
+      - network:ATM
+  - host: 172.16.31.230
+    collect_response_time: true
+    tags:
+      - network:ATM
+  - host: 172.16.35.230
+    collect_response_time: true
+    tags:
+      - network:ATM
+  - host: 172.16.7.230
+    collect_response_time: true
+    tags:
+      - network:ATM
+  - host: 172.16.61.231
+    collect_response_time: true
+    tags:
+      - network:ATM
+  - host: 172.16.19.230
+    collect_response_time: true
+    tags:
+      - network:ATM
+  - host: 172.16.55.230
+    collect_response_time: true
+    tags:
+      - network:ATM
+  - host: 172.31.254.221
+    collect_response_time: true
+    tags:
+      - network:ATM
+  - host: 172.16.39.231
+    collect_response_time: true
+    tags:
+      - network:ATM
+  - host: 172.16.27.230
+    collect_response_time: true
+    tags:
+      - network:ATM
+  - host: BG-ABM.ccu.loc
+    collect_response_time: true
+    tags:
+      - network:sdwan
+  - host: BK-ABM.ccu.loc
+    collect_response_time: true
+    tags:
+      - network:sdwan
+  - host: CP-TLR1.ccu.loc
+    collect_response_time: true
+    tags:
+      - network:sdwan
+  - host: RF2-TLR1.ccu.loc
+    collect_response_time: true
+    tags:
+      - network:sdwan
+  - host: DT-TLR1.ccu.loc
+    collect_response_time: true
+    tags:
+      - network:sdwan
+  - host: ER-TLR4.ccu.loc
+    collect_response_time: true
+    tags:
+      - network:sdwan
+  - host: FP-TLR3.ccu.loc
+    collect_response_time: true
+    tags:
+      - network:sdwan
+  - host: GC-DT2.ccu.loc
+    collect_response_time: true
+    tags:
+      - network:sdwan
+  - host: HD-TLR1.ccu.loc
+    collect_response_time: true
+    tags:
+      - network:sdwan
+  - host: OR-TLR6.ccu.loc
+    collect_response_time: true
+    tags:
+      - network:sdwan
+  - host: RS-TLR1.ccu.loc
+    collect_response_time: true
+    tags:
+      - network:sdwan
+  - host: SC-TLR3.ccu.loc
+    collect_response_time: true
+    tags:
+      - network:sdwan
+  - host: SL-TLR2.ccu.loc
+    collect_response_time: true
+    tags:
+      - network:sdwan
+  - host: WA-TLR1.ccu.loc
+    collect_response_time: true
+    tags:
+      - network:sdwan
+
+    ## @param collect_response_time - boolean - optional - default: false
+    ## Reports network.ping.response_time in ms if true
+    #
+    #   collect_response_time: true
+
+    ## @param timeout - float - optional - default: 4.0
+    ## Timeout in seconds
+    #
+    # timeout: 4.0
+
+    ## @param tags - list of key:value elements - optional
+    ## List of tags to attach to every metric, event and service check emitted by this integration.
+    ##
+    ## Learn more about tagging: https://docs.datadoghq.com/tagging/
+    #
+    # tags:
+    #   - <KEY_1>:<VALUE_1>
+    #   - <KEY_2>:<VALUE_2>

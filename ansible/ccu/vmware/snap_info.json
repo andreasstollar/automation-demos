@@ -1,0 +1,55 @@
+{
+  "search_results": {
+    "results": [
+      {
+        "changed": false,
+        "guest_snapshots": {
+          "snapshots": [
+            {
+              "id": 2,
+              "name": "VM Snapshot 8%2f18%2f2025, 9:44:48 AM",
+              "description": "snapshot foo",
+              "creation_time": "2025-08-18T16:45:01.462584+00:00",
+              "state": "poweredOff",
+              "quiesced": false
+            }
+          ],
+          "current_snapshot": {
+            "id": 2,
+            "name": "VM Snapshot 8%2f18%2f2025, 9:44:48 AM",
+            "description": "snapshot foo",
+            "creation_time": "2025-08-18T16:45:01.462584+00:00",
+            "state": "poweredOff",
+            "quiesced": false
+          }
+        },
+        "invocation": {
+          "module_args": {
+            "hostname": "vcenter.ccu.loc",
+            "username": "s_ansible",
+            "password": "VALUE_SPECIFIED_IN_NO_LOG_PARAMETER",
+            "validate_certs": false,
+            "folder": "/OPS Center/vm/Pre-Production",
+            "datacenter": "OPS Center",
+            "name": "ansible_vm",
+            "port": 443,
+            "use_instance_uuid": false,
+            "proxy_host": null,
+            "proxy_port": null,
+            "uuid": null,
+            "moid": null
+          }
+        },
+        "failed": false,
+        "item": "ansible_vm",
+        "ansible_loop_var": "item"
+      }
+    ],
+    "skipped": false,
+    "msg": "All items completed",
+    "changed": false
+  },
+  "_ansible_verbose_always": true,
+  "_ansible_no_log": false,
+  "changed": false
+}

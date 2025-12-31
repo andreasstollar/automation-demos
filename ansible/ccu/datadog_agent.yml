@@ -1,0 +1,161 @@
+# datadog_windows_awx.yml
+- name: Datadog Agent on Windows (domain service account, 15-at-a-time)
+  hosts: datadog_agent
+  gather_facts: yes
+  serial: 15
+  collections: [datadog.dd]
+
+  vars:
+    datadog_site: "us3.datadoghq.com"
+    # Optional: pin the exact version to avoid upgrades
+    # datadog_agent_version: "7.52.0"
+
+  # AWX should provide (literal values; no Jinja):
+  # - datadog_api_key: "<secret>"
+  # - dd_svc_pass: "<domain_password>"
+  # Optional:
+  # - dd_service_user_override: "ccu.loc\\s_datadog"
+
+  pre_tasks:
+    - name: Freeze service user (use override if provided)
+      ansible.builtin.set_fact:
+        dd_service_user_effective: "{{ dd_service_user_override | default('ccu.loc\\s_datadog') }}"
+
+    - name: Ensure required secrets are provided
+      ansible.builtin.assert:
+        that:
+          - datadog_api_key is defined
+          - dd_svc_pass is defined
+        fail_msg: "Provide datadog_api_key and dd_svc_pass via AWX credentials/extra vars."
+
+    # --- Detect agent.exe on C: or D:, read version, decide skip ---
+    - name: "Windows | Candidate agent paths (C: and D:)"
+      ansible.builtin.set_fact:
+        dd_agent_candidate_paths:
+          - 'C:\Program Files\Datadog\Datadog Agent\bin\agent.exe'
+          - 'D:\Program Files\Datadog\Datadog Agent\bin\agent.exe'
+      when: ansible_facts.os_family == "Windows"
+
+    - name: "Windows | Check which agent.exe exists"
+      ansible.windows.win_stat:
+        path: "{{ item }}"
+      loop: "{{ dd_agent_candidate_paths }}"
+      register: dd_agent_stat_multi
+      when: ansible_facts.os_family == "Windows"
+
+    - name: "Windows | Pick first existing agent.exe (if any)"
+      ansible.builtin.set_fact:
+        dd_agent_exe: >-
+          {{
+            (dd_agent_stat_multi.results
+             | selectattr('stat.exists','defined')
+             | selectattr('stat.exists')
+             | map(attribute='item')
+             | list
+             | first)
+          }}
+        dd_agent_exists: >-
+          {{
+            (dd_agent_stat_multi.results
+             | selectattr('stat.exists','defined')
+             | selectattr('stat.exists')
+             | list
+             | length) > 0
+          }}
+      when: ansible_facts.os_family == "Windows"
+
+    - name: Windows | Read installed Datadog Agent version (from discovered path)
+      ansible.windows.win_shell: |
+        & "{{ dd_agent_exe }}" version |
+        Select-String -Pattern '^Agent\s+([0-9]+\.[0-9]+\.[0-9]+)' |
+        % { $_.Matches[0].Groups[1].Value }
+      register: dd_ver
+      changed_when: false
+      failed_when: false
+      when:
+        - ansible_facts.os_family == "Windows"
+        - dd_agent_exists
+
+    - name: Windows | Record installed version (or 0.0.0 if not installed)
+      ansible.builtin.set_fact:
+        dd_installed_version: "{{ (dd_ver.stdout_lines | first) | default('0.0.0') }}"
+      when: ansible_facts.os_family == "Windows"
+
+    - name: Windows | Skip installer if already on pinned version
+      ansible.builtin.set_fact:
+        datadog_skip_install: true
+      when:
+        - ansible_facts.os_family == "Windows"
+        - datadog_agent_version is defined
+        - dd_installed_version is version(datadog_agent_version, '==')
+    # --- End detection/skip ---
+
+  tasks:
+    - block:
+        # ---> Path 1: PINNED exact version
+        - name: Install & configure Datadog Agent (pinned version)
+          include_role:
+            name: datadog.dd.agent
+          vars:
+            datadog_api_key: "{{ datadog_api_key }}"
+            datadog_site: "{{ datadog_site }}"
+            datadog_agent_version: "{{ datadog_agent_version }}"
+            datadog_skip_install: "{{ datadog_skip_install | default(false) }}"
+            datadog_config:
+              logs_enabled: true
+              apm_config:
+                enabled: false
+              process_config:
+                enabled: "true"
+          when: datadog_agent_version is defined
+
+        # ---> Path 2: UNPINNED (track latest 7.x)
+        - name: Install & configure Datadog Agent (latest 7.x)
+          include_role:
+            name: datadog.dd.agent
+          vars:
+            datadog_api_key: "{{ datadog_api_key }}"
+            datadog_site: "{{ datadog_site }}"
+            datadog_agent_major_version: 7
+            datadog_skip_install: "{{ datadog_skip_install | default(false) }}"
+            datadog_config:
+              logs_enabled: true
+              apm_config:
+                enabled: false
+              process_config:
+                enabled: "true"
+          when: datadog_agent_version is not defined
+
+        - name: Grant 'Log on as a service' to domain account
+          ansible.windows.win_user_right:
+            name: SeServiceLogonRight
+            users: ["{{ dd_service_user_effective }}"]
+            action: add
+
+        - name: Add domain account to Event Log Readers & Perf Log Users
+          ansible.windows.win_group_membership:
+            name: "{{ item }}"
+            members: ["{{ dd_service_user_effective }}"]
+            state: present
+          loop:
+            - "Event Log Readers"
+            - "Performance Log Users"
+
+        - name: Stop DatadogAgent (force-stop dependents)
+          ansible.windows.win_service:
+            name: DatadogAgent
+            state: stopped
+            force_dependent_services: true
+
+        - name: Set service logon and startup type
+          ansible.windows.win_service:
+            name: DatadogAgent
+            username: "{{ dd_service_user_effective }}"
+            password: "{{ dd_svc_pass }}"
+            start_mode: auto
+
+        - name: Start DatadogAgent
+          ansible.windows.win_service:
+            name: DatadogAgent
+            state: started
+      when: ansible_facts.os_family == "Windows"

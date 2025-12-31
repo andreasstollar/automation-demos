@@ -1,0 +1,16 @@
+---
+- hosts: localhost
+  gather_facts: no
+  connection: local
+  tasks:
+  - name: Get info about library items get UNAUTHORIZED with read-only access
+    vmware.vmware.content_library_item_info:
+      hostname: vcenter.ccu.loc
+      username: "{{ ansible_user }}"
+      password: "{{ ansible_password }}"
+      validate_certs: false
+      library_name: Templates
+    register: search_results
+  - name: show registered output
+    ansible.builtin.debug:
+      var: search_results

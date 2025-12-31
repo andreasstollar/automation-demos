@@ -1,0 +1,10 @@
+---
+- hosts: all
+  gather_facts: yes
+  tasks:
+  - name: Print all available facts
+    ansible.builtin.setup:
+    register: ansible_facts
+  - name: Get info for all installed services
+    ansible.windows.win_service_info:
+    register: service_info

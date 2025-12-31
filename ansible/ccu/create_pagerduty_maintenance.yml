@@ -1,0 +1,210 @@
+---
+- name: Create PagerDuty Maintenance Window (multiselect + All, core filters only)
+  hosts: localhost
+  gather_facts: true  # uses ansible_date_time for "now" defaults
+
+  vars:
+    # Credential injector should set:
+    #   pagerduty_api_key: "{{ api_key }}"
+    # Survey vars expected:
+    #   pagerduty_service_choices: ["Name:ID", ..., "All Services:__ALL__"]
+    #   start_time_pacific: "" | "YYYY-MM-DD HH:MM[:SS]" | ISO with Z/±HH:MM
+    #   end_time_pacific:   "" | "YYYY-MM-DD HH:MM[:SS]" | ISO with Z/±HH:MM
+    #   description: optional text shown in PD
+
+  tasks:
+    - name: Ensure API token and selections are present
+      assert:
+        that:
+          - (pagerduty_api_key | default('')) | length > 0
+          - (pagerduty_service_choices | default([])) | length > 0
+        fail_msg: "Missing PagerDuty API token or no services selected."
+
+    # ==================== TIME HANDLING (ROBUST) ====================
+
+    - name: Build 'now' string (controller clock) for defaults
+      set_fact:
+        _now_str: "{{ (ansible_date_time.date ~ ' ' ~ (ansible_date_time.time | regex_replace('\\..*','')))[:19] }}"
+
+    - name: Normalize raw inputs (fill start; leave end blank if not provided)
+      set_fact:
+        _start_in: "{{ (start_time_pacific | default('', true)) | default(_now_str, true) }}"
+        _end_in:   "{{ end_time_pacific   | default('', true) }}"
+
+    - name: Detect timezone markers on inputs
+      set_fact:
+        _start_has_tz: "{{ _start_in is search('Z$|[+\\-][0-9]{2}:?[0-9]{2}$') }}"
+        _end_has_tz:   "{{ _end_in is search('Z$|[+\\-][0-9]{2}:?[0-9]{2}$') if (_end_in | length > 0) else false }}"
+
+    - name: Set input mode labels
+      set_fact:
+        start_input_mode: "{{ _start_has_tz | ternary('iso_with_tz','pacific_local') }}"
+        end_input_mode:   "{{ (_end_in | length > 0 and _end_has_tz) | ternary('iso_with_tz','pacific_local') }}"
+
+    - name: Compute start epoch with GNU date (handles DST correctly)
+      set_fact:
+        start_epoch: >-
+          {{
+            (
+              lookup('pipe', 'date -d ' ~ (_start_in | quote) ~ ' +%s')
+              if _start_has_tz
+              else lookup('pipe', 'TZ=America/Los_Angeles date -d ' ~ (_start_in | quote) ~ ' +%s')
+            ) | int
+          }}
+
+    - name: Compute end epoch with GNU date (handles DST correctly)
+      set_fact:
+        end_epoch: >-
+          {{
+            (
+              (
+                lookup('pipe', 'date -d ' ~ (_end_in | quote) ~ ' +%s')
+                if _end_has_tz else
+                lookup('pipe', 'TZ=America/Los_Angeles date -d ' ~ (_end_in | quote) ~ ' +%s')
+              )
+              if (_end_in | length > 0)
+              else (start_epoch + 4*3600)
+            ) | int
+          }}
+
+    - name: Format final UTC ISO-8601 (Z) for PagerDuty
+      set_fact:
+        start_time: "{{ '%Y-%m-%dT%H:%M:%SZ' | strftime(start_epoch | int, True) }}"
+        end_time:   "{{ '%Y-%m-%dT%H:%M:%SZ' | strftime(end_epoch   | int, True) }}"
+
+    - name: Validate end after start
+      assert:
+        that:
+          - end_epoch | int > start_epoch | int
+        fail_msg: "end_time must be after start_time."
+
+    - name: Warn when timezone-tagged input is used
+      when: start_input_mode == 'iso_with_tz' or (end_input_mode == 'iso_with_tz' and (_end_in | length > 0))
+      debug:
+        msg:
+          - "Timezone-tagged input detected; treated as absolute (no Pacific TZ applied)."
+          - "start input: {{ _start_in if start_input_mode == 'iso_with_tz' else 'N/A' }} ({{ start_input_mode }})"
+          - "end   input: {{ _end_in   if (end_input_mode == 'iso_with_tz' and (_end_in | length > 0)) else 'N/A' }} ({{ end_input_mode }})"
+          - "Normalized UTC: start={{ start_time }}, end={{ end_time }}"
+
+    # ==================== SERVICE SELECTION (MULTI + ALL) ====================
+
+    - name: Determine if 'All Services' was selected
+      set_fact:
+        _selected: "{{ pagerduty_service_choices | default([]) }}"
+        _all_selected: "{{ '__ALL__' in (pagerduty_service_choices | default([])) }}"
+
+    - name: Parse IDs and names from explicit selections (no 'All Services')
+      when: not _all_selected
+      set_fact:
+        pd_service_ids:   "{{ _selected | map('regex_replace', '^(.+):([^:]+)$', '\\2') | list }}"
+        pd_service_names: "{{ _selected | map('regex_replace', '^(.+):([^:]+)$', '\\1') | list }}"
+
+    - name: Fetch services page 0 (with total) when All Services selected
+      when: _all_selected
+      uri:
+        url: "https://api.pagerduty.com/services?limit=100&offset=0&total=true"
+        method: GET
+        headers:
+          Authorization: "Token token={{ pagerduty_api_key }}"
+          Accept: "application/vnd.pagerduty+json;version=2"
+          Content-Type: "application/json"
+      register: pd_services_p0
+      no_log: true
+
+    - name: Compute total pages and seed list
+      when: _all_selected
+      set_fact:
+        _limit: "{{ pd_services_p0.json.limit | default(100) }}"
+        _total: "{{ pd_services_p0.json.total | default((pd_services_p0.json.services | length)) }}"
+        _pages: "{{ ((_total + (_limit|int) - 1) // (_limit|int)) | int }}"
+        pd_services_all: "{{ pd_services_p0.json.services | default([]) }}"
+
+    - name: Fetch remaining service pages (if any)
+      when: _all_selected and (_pages | int) > 1
+      uri:
+        url: "https://api.pagerduty.com/services?limit={{ _limit }}&offset={{ item * _limit }}"
+        method: GET
+        headers:
+          Authorization: "Token token={{ pagerduty_api_key }}"
+          Accept: "application/vnd.pagerduty+json;version=2"
+          Content-Type: "application/json"
+      loop: "{{ range(1, _pages | int) | list }}"
+      register: pd_services_pages
+      no_log: true
+
+    - name: Accumulate all services from additional pages
+      when: _all_selected and (_pages | int) > 1
+      set_fact:
+        pd_services_all: "{{ pd_services_all + (pd_services_pages.results | map(attribute='json.services') | list | flatten(levels=1)) }}"
+
+    - name: Extract IDs and names from all services (All Services)
+      when: _all_selected
+      set_fact:
+        pd_service_ids:   "{{ pd_services_all | map(attribute='id') | list }}"
+        pd_service_names: "{{ pd_services_all | map(attribute='name') | list }}"
+
+    - name: Fail if no services resolved
+      assert:
+        that:
+          - (pd_service_ids | default([])) | length > 0
+        fail_msg: "No PagerDuty services resolved. Check selections or permissions."
+
+    # ==================== CREATE WINDOW + SAFE OUTPUT ====================
+
+    - name: Build PD services payload (list of dicts)
+      set_fact:
+        pd_services_payload: []
+
+    - name: Append each service
+      set_fact:
+        pd_services_payload: "{{ pd_services_payload + [ {'id': item, 'type': 'service_reference'} ] }}"
+      loop: "{{ pd_service_ids }}"
+
+    - name: Create PagerDuty maintenance window
+      uri:
+        url: "https://api.pagerduty.com/maintenance_windows"
+        method: POST
+        headers:
+          Authorization: "Token token={{ pagerduty_api_key }}"
+          Accept: "application/vnd.pagerduty+json;version=2"
+          Content-Type: "application/json"
+        body_format: json
+        body:
+          maintenance_window:
+            type: maintenance_window
+            start_time: "{{ start_time }}"
+            end_time: "{{ end_time }}"
+            description: "{{ description | default('Scheduled via Ansible (Pacific input)') }}"
+            services: "{{ pd_services_payload }}"
+        status_code: 201
+      register: _pd_raw
+      no_log: true
+
+    - name: Compose safe output
+      no_log: false
+      set_fact:
+        pd_public:
+          selected_labels: "{{ _selected }}"
+          resolved_service_names: "{{ pd_service_names | default([]) }}"
+          resolved_service_count: "{{ pd_service_ids | length }}"
+          start_time_input: "{{ _start_in }}"
+          end_time_input: "{{ (_end_in if (_end_in | length > 0) else 'start + 4h default') }}"
+          start_input_mode: "{{ start_input_mode }}"
+          end_input_mode: "{{ (end_input_mode if (_end_in | length > 0) else 'derived_from_start') }}"
+          start_time_utc: "{{ start_time }}"
+          end_time_utc: "{{ end_time }}"
+          pd_description: "{{ description | default('Scheduled via Ansible (Pacific input)') }}"
+          id: "{{ _pd_raw.json.maintenance_window.id | default('') }}"
+          html_url: "{{ _pd_raw.json.maintenance_window.html_url | default('') }}"
+
+    - name: Show PagerDuty result (safe)
+      no_log: false
+      debug:
+        var: pd_public
+
+    - name: Add result to job summary
+      no_log: false
+      set_stats:
+        data:
+          pagerduty_maintenance: "{{ pd_public }}"

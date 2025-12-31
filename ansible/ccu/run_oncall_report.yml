@@ -1,0 +1,15 @@
+- name: Send Engineering On-Call Email from PagerDuty
+  hosts: localhost
+  gather_facts: false
+
+  vars:
+    pagerduty_token: "{{ lookup('env', 'PAGERDUTY_API_TOKEN') }}"
+    mail_to: "[{{ mail_to }}]"
+    mail_from: "ansible@columbiacu.org"
+    smtp_host: "ops-mail-01.ccu.loc"
+    smtp_port: 25
+    page_limit: 100
+    max_pages: 10
+
+  roles:
+    - pagerduty_oncall

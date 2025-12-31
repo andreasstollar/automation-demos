@@ -1,0 +1,21 @@
+- name: Initialize oncall_details
+  set_fact:
+    oncall_details: []
+
+- name: Parse oncall entries
+  set_fact:
+    oncall_details: "{{ oncall_details + [new_entry] }}"
+  vars:
+    start_epoch: "{{ (item.start | default('1970-01-01T00:00:00+0000') | to_datetime('%Y-%m-%dT%H:%M:%S%z')).timestamp() | int }}"
+    end_epoch: >-
+      {{ (item.end is defined and item.end is not none)
+         | ternary((item.end | to_datetime('%Y-%m-%dT%H:%M:%S%z')).timestamp() | int, None) }}
+    new_entry:
+      escalation_policy: "{{ item.escalation_policy }}"
+      user: "{{ item.user }}"
+      escalation_level: "{{ item.escalation_level }}"
+      start_epoch: "{{ start_epoch }}"
+      end_epoch: "{{ end_epoch }}"
+  loop: "{{ it_oncalls }}"
+  loop_control:
+    label: "{{ item.user.summary }}"

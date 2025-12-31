@@ -1,0 +1,19 @@
+---
+- hosts: localhost
+  gather_facts: no
+  connection: local
+  vars:
+    connection_args:
+      vcenter_hostname: vcenter.ccu.loc
+      vcenter_username: "{{ ansible_user }}"
+      vcenter_password: "{{ ansible_password }}"
+      vcenter_validate_certs: false
+  tasks:
+# Search for VM moid from name
+  - name: Get moid for specific network
+    ansible.builtin.debug:
+      msg: "{{ lookup('vmware.vmware_rest.network_moid', '/OPS Center/network/Test-50', **connection_args) }}"
+    register: search_results
+  - name: show registered output
+    ansible.builtin.debug:
+      var: search_results

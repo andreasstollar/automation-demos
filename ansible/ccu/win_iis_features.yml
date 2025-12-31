@@ -1,0 +1,8 @@
+---
+- hosts: all
+  gather_facts: yes
+  tasks:
+    - name: Show All IIS Settings
+      ansible.windows.win_feature_info:
+        name: Web-*
+

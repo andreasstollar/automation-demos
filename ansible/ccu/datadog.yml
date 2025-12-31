@@ -1,0 +1,6 @@
+# file: datadog.yml
+- name: Configure Datadog
+  hosts: all
+  serial: 15
+  roles:
+    - role: datadog

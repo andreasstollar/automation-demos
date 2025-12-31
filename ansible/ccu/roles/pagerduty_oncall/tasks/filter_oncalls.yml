@@ -1,0 +1,7 @@
+- name: Filter for Level 1 from 'IT On-Call Escalation'
+  set_fact:
+    it_oncalls: >-
+      {{ all_oncalls
+         | selectattr('escalation_policy.summary', 'equalto', 'IT On-Call Escalation')
+         | selectattr('escalation_level', 'equalto', 1)
+         | list }}
