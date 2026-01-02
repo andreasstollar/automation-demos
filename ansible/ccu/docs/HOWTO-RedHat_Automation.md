@@ -28,6 +28,16 @@ passwd: password updated successfully
 ## run the installer as an ansible playbook. This failed first time due to dbus errors, need to login as user 'aap' (NOT su - app, or sudo per https://access.redhat.com/solutions/7090808)
 [aap@ops-ansible-02 ansible-automation-platform-containerized-setup-2.6-4]$ ansible-playbook -i inventory ansible.containerized_installer.install
 ... lots of output, started at 10:55 AM finished 11:11 AM (third attempt)
+## had to set some variables for SSL certs in the inventory file, then re-ran installer.
+custom_ca_cert=/home/aap/aap/tls/ca_ccu_loc.pem
+gateway_tls_cert=/home/aap/aap/tls/tower.pem
+gateway_tls_key=/home/aap/aap/tls/tower.key
+controller_tls_cert=/home/aap/aap/tls/tower.pem
+controller_tls_key=/home/aap/aap/tls/tower.key
+hub_tls_cert=/home/aap/aap/tls/tower.pem
+hub_tls_key=/home/aap/aap/tls/tower.key
+eda_pg_tls_cert=/home/aap/aap/tls/tower.pem
+eda_pg_tls_key=/home/aap/aap/tls/tower.key
 
 
 ```
@@ -119,6 +129,25 @@ ansible.windows 2.8.0
 
 ### SSL Certificates
 
+For containerized installs set the keys and certs in the inventory file and re-run the installer
+```
+custom_ca_cert=/home/aap/aap/tls/ca_ccu_loc.pem
+gateway_tls_cert=/home/aap/aap/tls/tower.pem
+gateway_tls_key=/home/aap/aap/tls/tower.key
+controller_tls_cert=/home/aap/aap/tls/tower.pem
+controller_tls_key=/home/aap/aap/tls/tower.key
+hub_tls_cert=/home/aap/aap/tls/tower.pem
+hub_tls_key=/home/aap/aap/tls/tower.key
+eda_pg_tls_cert=/home/aap/aap/tls/tower.pem
+eda_pg_tls_key=/home/aap/aap/tls/tower.key
+```
+Then re-run the installer:
+```
+[aap@ops-ansible-02 ansible-automation-platform-containerized-setup-2.6-4]$ ansible-playbook -i inventory ansible.containerized_installer.install
+```
+
+
+# OLD
 SSL Certs are pulled from the host vm at /etc/tower/tower.key and /etc/tower/tower.cert. To add signed certs simply copy valid cert and key to these files and restart the controller service with:
 
 ```
