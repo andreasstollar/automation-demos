@@ -1,7 +1,0 @@
-{% for host in ansible_play_hosts %}
-hostname : {{ host }}
-{% for k in update_results.updates %}
-  {{ update_results.updates[k].title }}
-{% endfor %}
-
-{% endfor %}
